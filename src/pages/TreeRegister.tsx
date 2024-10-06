@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   IonContent, 
   IonHeader, 
@@ -12,13 +12,15 @@ import {
   IonLabel, 
   IonInput, 
   IonAlert,
-  IonDatetime
+  IonDatetime,
+  IonSelect,
+  IonSelectOption 
 } from '@ionic/react';
 import { useHistory } from 'react-router';
 import { arrowBack, camera, checkmark } from 'ionicons/icons'; 
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { Geolocation } from '@capacitor/geolocation';
-import { getDatabase, push, ref } from 'firebase/database';
+import { getDatabase, ref, get, push } from 'firebase/database';
 
 const TreeRegister: React.FC = () => {
     const history = useHistory();
@@ -33,6 +35,52 @@ const TreeRegister: React.FC = () => {
     const [showAlert, setShowAlert] = useState(false);
     const [dateBirth, setDateBirth] = useState<string>('');
     const [registerDate, setRegisterDate] = useState<string>('');
+
+    const [speciesList, setSpeciesList] = useState<any[]>([]);
+    const [sectorsList, setSectorsList] = useState<any[]>([]);
+
+    useEffect(() => {
+        loadSpecies();
+        loadSectors();
+    }, []);
+
+    const loadSpecies = async () => {
+        try {
+            const database = getDatabase();
+            const speciesRef = ref(database, 'species');
+            const snapshot = await get(speciesRef);
+            
+            if (snapshot.exists()) {
+                const speciesData = snapshot.val();
+                const speciesArray = Object.keys(speciesData).map(key => ({
+                    id: key,
+                    ...speciesData[key]
+                }));
+                setSpeciesList(speciesArray);
+            }
+        } catch (error) {
+            console.error("Error al cargar las especies:", error);
+        }
+    };
+
+    const loadSectors = async () => {
+        try {
+            const database = getDatabase();
+            const sectorsRef = ref(database, 'sectors');
+            const snapshot = await get(sectorsRef);
+            
+            if (snapshot.exists()) {
+                const sectorsData = snapshot.val();
+                const sectorsArray = Object.keys(sectorsData).map(key => ({
+                    id: key,
+                    ...sectorsData[key]
+                }));
+                setSectorsList(sectorsArray);
+            }
+        } catch (error) {
+            console.error("Error al cargar los sectores:", error);
+        }
+    };
 
     const handleBack = () => {
         history.goBack();
@@ -79,7 +127,7 @@ const TreeRegister: React.FC = () => {
 
     const handleSave = async () => {
         if (!code || !speciesId || !dateBirth || !registerDate || !diameter || !latitude || !longitude || !sectorId || !photo) {
-            setAlertMessage('Error por favor, completa todos los campos requeridos.');
+            setAlertMessage('Error: por favor, completa todos los campos requeridos.');
             setShowAlert(true);
             return; 
         }
@@ -101,8 +149,8 @@ const TreeRegister: React.FC = () => {
             const treesRef = ref(database, 'trees');
             await push(treesRef, newTree);
         } catch (error) {
-            console.error("Error al guardar el arbol:", error);
-            setAlertMessage('Error al registrar el arbol: ' + error.message);
+            console.error("Error al guardar el árbol:", error);
+            setAlertMessage('Error al registrar el árbol: ' + error.message);
             setShowAlert(true);
         }
 
@@ -140,12 +188,18 @@ const TreeRegister: React.FC = () => {
                     />
                 </IonItem>
                 <IonItem>
-                    <IonLabel position="stacked">Especie ID</IonLabel>
-                    <IonInput 
-                        value={speciesId} 
-                        onIonChange={(e) => setSpeciesId(e.detail.value!)} 
-                        required 
-                    />
+                    <IonLabel position="stacked">Especie</IonLabel>
+                    <IonSelect
+                        value={speciesId}
+                        onIonChange={(e) => setSpeciesId(e.detail.value!)}
+                        required
+                    >
+                        {speciesList.map(species => (
+                            <IonSelectOption key={species.id} value={species.id}>
+                                {species.commonName} {/* Asegúrate de usar el campo correcto */}
+                            </IonSelectOption>
+                        ))}
+                    </IonSelect>
                 </IonItem>
                 <IonItem>
                     <IonLabel position="stacked">Diámetro (cm)</IonLabel>
@@ -157,12 +211,18 @@ const TreeRegister: React.FC = () => {
                     />
                 </IonItem>
                 <IonItem>
-                    <IonLabel position="stacked">Sector ID</IonLabel>
-                    <IonInput 
-                        value={sectorId} 
-                        onIonChange={(e) => setSectorId(e.detail.value!)} 
-                        required 
-                    />
+                    <IonLabel position="stacked">Sector</IonLabel>
+                    <IonSelect
+                        value={sectorId}
+                        onIonChange={(e) => setSectorId(e.detail.value!)}
+                        required
+                    >
+                        {sectorsList.map(sector => (
+                            <IonSelectOption key={sector.id} value={sector.id}>
+                                {sector.name} {/* Asegúrate de usar el campo correcto */}
+                            </IonSelectOption>
+                        ))}
+                    </IonSelect>
                 </IonItem>
                 <IonItem>
                     <IonLabel position="stacked">Latitud</IonLabel>
