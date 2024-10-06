@@ -21,6 +21,7 @@ import { arrowBack, camera, checkmark } from 'ionicons/icons';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { Geolocation } from '@capacitor/geolocation';
 import { getDatabase, ref, get, push } from 'firebase/database';
+import { getStorage, ref as storageRef, uploadString, getDownloadURL } from 'firebase/storage';
 
 const TreeRegister: React.FC = () => {
     const history = useHistory();
@@ -33,8 +34,8 @@ const TreeRegister: React.FC = () => {
     const [photo, setPhoto] = useState('');
     const [alertMessage, setAlertMessage] = useState('');
     const [showAlert, setShowAlert] = useState(false);
-    const [dateBirth, setDateBirth] = useState<string>('');
-    const [registerDate, setRegisterDate] = useState<string>('');
+    const [dateBirth, setDateBirth] = useState<string>(new Date().toISOString().split('T')[0]); // Valor por defecto
+    const [registerDate, setRegisterDate] = useState<string>(new Date().toISOString().split('T')[0]); // Valor por defecto
 
     const [speciesList, setSpeciesList] = useState<any[]>([]);
     const [sectorsList, setSectorsList] = useState<any[]>([]);
@@ -43,6 +44,19 @@ const TreeRegister: React.FC = () => {
         loadSpecies();
         loadSectors();
     }, []);
+    useEffect(() => {
+        // Establecer el valor por defecto para speciesId
+        if (speciesList.length > 0) {
+            setSpeciesId(speciesList[0].id); // Seleccionar la primera especie como valor por defecto
+        }
+    }, [speciesList]);
+    
+    useEffect(() => {
+        // Establecer el valor por defecto para sectorId
+        if (sectorsList.length > 0) {
+            setSectorId(sectorsList[0].id); // Seleccionar el primer sector como valor por defecto
+        }
+    }, [sectorsList]);
 
     const loadSpecies = async () => {
         try {
@@ -103,13 +117,26 @@ const TreeRegister: React.FC = () => {
             const image = await Camera.getPhoto({
                 quality: 90,
                 allowEditing: false,
-                resultType: CameraResultType.Uri,
+                resultType: CameraResultType.Base64,
             });
-            setPhoto(image.webPath || '');
+            setPhoto(image.base64String || '');
         } catch (error) {
             console.error(error);
             setAlertMessage('Error al tomar la foto');
             setShowAlert(true);
+        }
+    };
+
+    const uploadPhotoToFirebase = async (base64String: string) => {
+        try {
+            const storage = getStorage();
+            const photoRef = storageRef(storage, `trees/${new Date().getTime()}.jpg`);
+            await uploadString(photoRef, base64String, 'base64');
+            const url = await getDownloadURL(photoRef);
+            return url;
+        } catch (error) {
+            console.error('Error al subir la foto:', error);
+            throw new Error('Error al subir la foto a Firebase Storage');
         }
     };
 
@@ -121,8 +148,8 @@ const TreeRegister: React.FC = () => {
         setLatitude('');
         setLongitude('');
         setPhoto('');
-        setDateBirth('');
-        setRegisterDate('');
+        setDateBirth(new Date().toISOString().split('T')[0]);
+        setRegisterDate(new Date().toISOString().split('T')[0]);
     };
 
     const handleSave = async () => {
@@ -131,6 +158,7 @@ const TreeRegister: React.FC = () => {
             setShowAlert(true);
             return; 
         }
+        const uploadedPhotoUrl = await uploadPhotoToFirebase(photo);
         const newTree: Tree = {
             speciesId,
             code,
@@ -142,7 +170,7 @@ const TreeRegister: React.FC = () => {
             longitude: parseFloat(longitude),
             modifyDate: '',
             sectorId,
-            imageUrl: photo
+            imageUrl: uploadedPhotoUrl
         };
         try {
             const database = getDatabase();
@@ -196,7 +224,7 @@ const TreeRegister: React.FC = () => {
                     >
                         {speciesList.map(species => (
                             <IonSelectOption key={species.id} value={species.id}>
-                                {species.commonName} {/* Asegúrate de usar el campo correcto */}
+                                {species.commonName}
                             </IonSelectOption>
                         ))}
                     </IonSelect>
@@ -219,7 +247,7 @@ const TreeRegister: React.FC = () => {
                     >
                         {sectorsList.map(sector => (
                             <IonSelectOption key={sector.id} value={sector.id}>
-                                {sector.name} {/* Asegúrate de usar el campo correcto */}
+                                {sector.name} 
                             </IonSelectOption>
                         ))}
                     </IonSelect>
@@ -269,7 +297,7 @@ const TreeRegister: React.FC = () => {
                     </IonButton>
                 </IonItem>
                 {photo && (
-                    <img src={photo} alt="Árbol" style={{ width: '100%', marginTop: '10px' }} />
+                   <img src={`data:image/jpeg;base64,${photo}`} alt="Arbol" style={{ width: '100%', marginTop: '10px' }} />
                 )}
             </IonContent>
 
