@@ -1,0 +1,114 @@
+{
+    "species": {
+      "species1": {
+        "commonName": "Tajibo",
+        "scientificName": "Handroanthus Abayoy",
+        "foliage": "No caducifolio"
+      },
+      "species2": {
+        "commonName": "Tipuana",
+        "scientificName": "Árbol semi-caducifolio y alóctono",
+        "foliage": "Semi-caducifolio"
+      },
+      "species3": {
+        "commonName": "Pacay",
+        "scientificName": "Árbol mimosáceo de la familia de las leguminosas",
+        "foliage": "Mimosáceo"
+      },
+      "species4": {
+        "commonName": "Jacaranda",
+        "scientificName": "Árbol subtropical de la familia Bignoniaceae",
+        "foliage": "Subtropical"
+      },
+      "species5": {
+        "commonName": "Álamo",
+        "scientificName": "Populus alba",
+        "foliage": "Caducifolio"
+      }
+    },
+    "sectors": {
+      "sector1": {
+        "name": "Parqueo",
+        "polygon": "Poligono Parqueo"
+      },
+      "sector2": {
+        "name": "Biblioteca",
+        "polygon": "Poligono Biblioteca"
+      },
+      "sector3": {
+        "name": "Coliseo",
+        "polygon": "Poligono Coliseo"
+      },
+      "sector4": {
+        "name": "Medicina",
+        "polygon": "Poligono Medicina"
+      },
+      "sector5": {
+        "name": "Bosque Norte",
+        "polygon": "Poligono Bosque Norte"
+      }
+    },
+    "trees": {
+      "tree1": {
+        "speciesId": "species1",
+        "code": "TJB001",
+        "dateBirth": "2024-07-01",
+        "diameter": 60.38,
+        "deleteDate": "2025-02-15",
+        "latitude": -16.5000,
+        "longitude": -68.1500,
+        "modifyDate": "2025-01-30",
+        "sectorId": "sector1",
+        "imageUrl": "https://firebasestorage.googleapis.com/v0/b/treemap-de6cf.appspot.com/o/tajibo.jpeg?alt=media&token=9fdfbc29-ba8c-45b8-9992-abd0c0a0e9cd"
+      },
+      "tree2": {
+        "speciesId": "species2",
+        "code": "TPN002",
+        "dateBirth": "2024-11-01",
+        "diameter": 78.56,
+        "deleteDate": "2025-06-28",
+        "latitude": -1.9500,
+        "longitude": 30.0586,
+        "modifyDate": "2025-08-04",
+        "sectorId": "sector2",
+        "imageUrl": "https://firebasestorage.googleapis.com/v0/b/treemap-de6cf.appspot.com/o/tipuana.jpeg?alt=media&token=edc51831-0861-438d-842c-59d7e954e8ea"
+      },
+      "tree3": {
+        "speciesId": "species3",
+        "code": "PCY003",
+        "dateBirth": "2025-05-01",
+        "diameter": 33.17,
+        "deleteDate": "2024-02-26",
+        "latitude": 26.8206,
+        "longitude": 75.7400,
+        "modifyDate": "2024-06-30",
+        "sectorId": "sector3",
+        "imageUrl": "https://firebasestorage.googleapis.com/v0/b/treemap-de6cf.appspot.com/o/Pacay.jpg?alt=media&token=cf71c1f6-7ebb-43c2-91cd-04fdee5854f2"
+      },
+      "tree4": {
+        "speciesId": "species4",
+        "code": "JCR004",
+        "dateBirth": "2022-10-01",
+        "diameter": 88.02,
+        "deleteDate": "2025-06-16",
+        "latitude": -1.2921,
+        "longitude": 36.8219,
+        "modifyDate": "2025-08-04",
+        "sectorId": "sector4",
+        "imageUrl": "https://firebasestorage.googleapis.com/v0/b/treemap-de6cf.appspot.com/o/jacaranda.jpg?alt=media&token=2f18366d-5b48-4703-b27c-07707be81ae8"
+      },
+      "tree5": {
+        "speciesId": "species5",
+        "code": "ALM005",
+        "dateBirth": "2024-09-01",
+        "diameter": 57.81,
+        "deleteDate": "2024-08-13",
+        "latitude": -23.5505,
+        "longitude": -46.6333,
+        "modifyDate": "2024-04-15",
+        "sectorId": "sector5",
+        "imageUrl": "https://firebasestorage.googleapis.com/v0/b/treemap-de6cf.appspot.com/o/Alamo.jpg?alt=media&token=6ef5dbee-3428-4677-b4f0-7f1832478e9f"
+      }
+    }
+  }
+  
