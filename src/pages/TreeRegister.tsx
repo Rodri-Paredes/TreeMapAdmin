@@ -11,8 +11,8 @@ import {
   IonItem, 
   IonLabel, 
   IonInput, 
-  IonAlert, 
-  IonDatetime 
+  IonAlert,
+  IonDatetime
 } from '@ionic/react';
 import { useHistory } from 'react-router';
 import { arrowBack, camera, checkmark } from 'ionicons/icons'; 
@@ -21,17 +21,17 @@ import { Geolocation } from '@capacitor/geolocation';
 
 const TreeRegister: React.FC = () => {
     const history = useHistory();
-    const [treeName, setTreeName] = useState('');
-    const [treeSpecies, setTreeSpecies] = useState('');
+    const [code, setCode] = useState('');
+    const [speciesId, setSpeciesId] = useState('');
+    const [diameter, setDiameter] = useState<number>(0); 
+    const [sectorId, setSectorId] = useState(''); 
     const [latitude, setLatitude] = useState('');
     const [longitude, setLongitude] = useState('');
     const [photo, setPhoto] = useState('');
     const [alertMessage, setAlertMessage] = useState('');
     const [showAlert, setShowAlert] = useState(false);
-
-    // Nuevos estados para las fechas
-    const [censusDate, setCensusDate] = useState<string>('');
-    const [birthDate, setBirthDate] = useState<string>('');
+    const [dateBirth, setDateBirth] = useState<string>('');
+    const [registerDate, setRegisterDate] = useState<string>('');
 
     const handleBack = () => {
         history.goBack();
@@ -44,6 +44,7 @@ const TreeRegister: React.FC = () => {
             setLongitude(coordinates.coords.longitude.toString());
         } catch (error) {
             console.error(error);
+            setAlertMessage('Error al obtener la ubicación');
             setShowAlert(true);
         }
     };
@@ -64,20 +65,36 @@ const TreeRegister: React.FC = () => {
     };
 
     const resetFields = () => {
-        setTreeName('');
-        setTreeSpecies('');
+        setCode('');
+        setSpeciesId('');
+        setDiameter(0);
+        setSectorId('');
         setLatitude('');
         setLongitude('');
         setPhoto('');
-        setCensusDate('');
-        setBirthDate('');
+        setDateBirth('');
+        setRegisterDate('');
     };
 
     const handleSave = () => {
-        // TODO: Guardar datos en la base de datos
+        const newTree: Tree = {
+            speciesId,
+            code,
+            dateBirth,
+            registerDate,
+            diameter,
+            deleteDate: '',
+            latitude: parseFloat(latitude),
+            longitude: parseFloat(longitude),
+            modifyDate: '',
+            sectorId,
+            imageUrl: photo
+        };
+
+        console.log(newTree);
         setAlertMessage('Árbol registrado con éxito!');
         setShowAlert(true);
-        resetFields(); // Limpiar campos después de registrar
+        resetFields();
     };
 
     return (
@@ -100,18 +117,35 @@ const TreeRegister: React.FC = () => {
 
             <IonContent className="ion-padding">
                 <IonItem>
-                    <IonLabel position="stacked">Nombre</IonLabel>
+                    <IonLabel position="stacked">Código</IonLabel>
                     <IonInput 
-                        value={treeName} 
-                        onIonChange={(e) => setTreeName(e.detail.value!)} 
+                        value={code} 
+                        onIonChange={(e) => setCode(e.detail.value!)} 
                         required 
                     />
                 </IonItem>
                 <IonItem>
-                    <IonLabel position="stacked">Especie</IonLabel>
+                    <IonLabel position="stacked">Especie ID</IonLabel>
                     <IonInput 
-                        value={treeSpecies} 
-                        onIonChange={(e) => setTreeSpecies(e.detail.value!)} 
+                        value={speciesId} 
+                        onIonChange={(e) => setSpeciesId(e.detail.value!)} 
+                        required 
+                    />
+                </IonItem>
+                <IonItem>
+                    <IonLabel position="stacked">Diámetro (cm)</IonLabel>
+                    <IonInput 
+                        type="number" 
+                        value={diameter} 
+                        onIonChange={(e) => setDiameter(parseFloat(e.detail.value!))} 
+                        required 
+                    />
+                </IonItem>
+                <IonItem>
+                    <IonLabel position="stacked">Sector ID</IonLabel>
+                    <IonInput 
+                        value={sectorId} 
+                        onIonChange={(e) => setSectorId(e.detail.value!)} 
                         required 
                     />
                 </IonItem>
@@ -133,30 +167,25 @@ const TreeRegister: React.FC = () => {
                     Obtener Ubicación Actual
                 </IonButton>
 
-                {/* Estilos para centrar y ajustar tamaño de los calendarios */}
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
-                    <IonItem style={{ maxWidth: '300px' }}>
-                        <IonLabel position="stacked">Fecha de Censo</IonLabel>
-                        <IonDatetime 
-                            displayFormat="DD MMM YYYY" 
-                            placeholder="Selecciona la fecha de censo"
-                            value={censusDate} 
-                            onIonChange={(e) => setCensusDate(e.detail.value!)} 
-                        />
-                    </IonItem>
-                </div>
+                <IonItem>
+                    <IonLabel position="stacked">Fecha de Nacimiento</IonLabel>
+                    <IonDatetime 
+                        presentation="date" 
+                        value={dateBirth} 
+                        onIonChange={(e) => setDateBirth(e.detail.value!)} 
+                        preferWheel={true}
+                    />
+                </IonItem>
 
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
-                    <IonItem style={{ maxWidth: '300px' }}>
-                        <IonLabel position="stacked">Fecha de Nacimiento</IonLabel>
-                        <IonDatetime 
-                            displayFormat="DD MMM YYYY" 
-                            placeholder="Selecciona la fecha de nacimiento"
-                            value={birthDate} 
-                            onIonChange={(e) => setBirthDate(e.detail.value!)} 
-                        />
-                    </IonItem>
-                </div>
+                <IonItem>
+                    <IonLabel position="stacked">Fecha de Registro</IonLabel>
+                    <IonDatetime 
+                        presentation="date" 
+                        value={registerDate} 
+                        onIonChange={(e) => setRegisterDate(e.detail.value!)} 
+                        preferWheel={true}
+                    />
+                </IonItem>
 
                 <IonItem>
                     <IonLabel>Foto</IonLabel>
