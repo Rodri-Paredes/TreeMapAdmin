@@ -11,7 +11,8 @@ import {
   IonItem, 
   IonLabel, 
   IonInput, 
-  IonAlert 
+  IonAlert, 
+  IonDatetime 
 } from '@ionic/react';
 import { useHistory } from 'react-router';
 import { arrowBack, camera, checkmark } from 'ionicons/icons'; 
@@ -28,6 +29,10 @@ const TreeRegister: React.FC = () => {
     const [alertMessage, setAlertMessage] = useState('');
     const [showAlert, setShowAlert] = useState(false);
 
+    // Nuevos estados para las fechas
+    const [censusDate, setCensusDate] = useState<string>('');
+    const [birthDate, setBirthDate] = useState<string>('');
+
     const handleBack = () => {
         history.goBack();
     };
@@ -39,7 +44,6 @@ const TreeRegister: React.FC = () => {
             setLongitude(coordinates.coords.longitude.toString());
         } catch (error) {
             console.error(error);
-            //setAlertMessage('Error al obtener la ubicación: ' + error.message);
             setShowAlert(true);
         }
     };
@@ -65,6 +69,8 @@ const TreeRegister: React.FC = () => {
         setLatitude('');
         setLongitude('');
         setPhoto('');
+        setCensusDate('');
+        setBirthDate('');
     };
 
     const handleSave = () => {
@@ -72,7 +78,6 @@ const TreeRegister: React.FC = () => {
         setAlertMessage('Árbol registrado con éxito!');
         setShowAlert(true);
         resetFields(); // Limpiar campos después de registrar
-        // Llamar history.goBack() si se desea regresar a la lista
     };
 
     return (
@@ -127,6 +132,32 @@ const TreeRegister: React.FC = () => {
                 <IonButton expand="full" onClick={handleGetLocation} style={{ margin: '10px 0' }}>
                     Obtener Ubicación Actual
                 </IonButton>
+
+                {/* Estilos para centrar y ajustar tamaño de los calendarios */}
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
+                    <IonItem style={{ maxWidth: '300px' }}>
+                        <IonLabel position="stacked">Fecha de Censo</IonLabel>
+                        <IonDatetime 
+                            displayFormat="DD MMM YYYY" 
+                            placeholder="Selecciona la fecha de censo"
+                            value={censusDate} 
+                            onIonChange={(e) => setCensusDate(e.detail.value!)} 
+                        />
+                    </IonItem>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '10px' }}>
+                    <IonItem style={{ maxWidth: '300px' }}>
+                        <IonLabel position="stacked">Fecha de Nacimiento</IonLabel>
+                        <IonDatetime 
+                            displayFormat="DD MMM YYYY" 
+                            placeholder="Selecciona la fecha de nacimiento"
+                            value={birthDate} 
+                            onIonChange={(e) => setBirthDate(e.detail.value!)} 
+                        />
+                    </IonItem>
+                </div>
+
                 <IonItem>
                     <IonLabel>Foto</IonLabel>
                     <IonButton onClick={handleTakePhoto}>

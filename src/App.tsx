@@ -35,6 +35,7 @@ import '@ionic/react/css/palettes/dark.system.css';
 import './theme/variables.css';
 import TreeList from './pages/TreeList';
 import MapPage from './pages/MapPage';
+import TreeRegister from './pages/TreeRegister';
 
 setupIonicReact();
 
@@ -47,6 +48,9 @@ const App: React.FC = () => (
         </Route>
         <Route exact path="/map">
           <MapPage />
+        </Route>
+        <Route exact path="/tree-register">
+          <TreeRegister />
         </Route>
         <Route exact path="/">
           <Redirect to="/tree-list" />
