@@ -9,12 +9,11 @@ const useFetchTrees = (setTrees: React.Dispatch<React.SetStateAction<Tree[]>>, c
                 const speciesRef = ref(database, "species");
                 const sectorsRef = ref(database, "sectors");
             
-                // Listen to changes of Species
+
                 onValue(speciesRef, (snapshot) => {
                     const speciesItem = snapshot.val();
-                    let speciesArray: { [key: string]: Species } = {}; // Store species
-            
-                    // Convert species into an object to find by id
+                    let speciesArray: { [key: string]: Species } = {};
+
                     if (speciesItem) {
                         speciesArray = Object.fromEntries(
                             Object.entries(speciesItem).map(([key, value]) => [
@@ -28,12 +27,12 @@ const useFetchTrees = (setTrees: React.Dispatch<React.SetStateAction<Tree[]>>, c
                         );
                     }
             
-                    // Listen to changes of Sectors
+
                     onValue(sectorsRef, (snapshot) => {
                         const sectorItem = snapshot.val();
-                        let sectorArray: { [key: string]: Sector } = {}; // Store sectors
+                        let sectorArray: { [key: string]: Sector } = {};
             
-                        // Convert sectors into an object to find by id
+
                         if (sectorItem) {
                             sectorArray = Object.fromEntries(
                                 Object.entries(sectorItem).map(([key, value]) => [

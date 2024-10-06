@@ -39,11 +39,15 @@ const TreeRegister: React.FC = () => {
 
     const [speciesList, setSpeciesList] = useState<any[]>([]);
     const [sectorsList, setSectorsList] = useState<any[]>([]);
+    
+    // Nuevo estado para controlar el envío del formulario
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         loadSpecies();
         loadSectors();
     }, []);
+    
     useEffect(() => {
         // Establecer el valor por defecto para speciesId
         if (speciesList.length > 0) {
@@ -148,8 +152,8 @@ const TreeRegister: React.FC = () => {
         setLatitude('');
         setLongitude('');
         setPhoto('');
-        setDateBirth(new Date().toISOString().split('T')[0]);
-        setRegisterDate(new Date().toISOString().split('T')[0]);
+        setDateBirth(new Date().toISOString().split('T')[0]); // Resetear a la fecha actual
+        setRegisterDate(new Date().toISOString().split('T')[0]); // Resetear a la fecha actual
     };
 
     const handleSave = async () => {
@@ -158,6 +162,10 @@ const TreeRegister: React.FC = () => {
             setShowAlert(true);
             return; 
         }
+
+        // Deshabilitar el botón mientras se está enviando el formulario
+        setIsSubmitting(true);
+
         const uploadedPhotoUrl = await uploadPhotoToFirebase(photo);
         const newTree: Tree = {
             speciesId,
@@ -172,6 +180,7 @@ const TreeRegister: React.FC = () => {
             sectorId,
             imageUrl: uploadedPhotoUrl
         };
+
         try {
             const database = getDatabase();
             const treesRef = ref(database, 'trees');
@@ -180,6 +189,9 @@ const TreeRegister: React.FC = () => {
             console.error("Error al guardar el árbol:", error);
             setAlertMessage('Error al registrar el árbol: ' + error.message);
             setShowAlert(true);
+        } finally {
+            // Habilitar el botón nuevamente
+            setIsSubmitting(false);
         }
 
         console.log(newTree);
@@ -199,7 +211,7 @@ const TreeRegister: React.FC = () => {
                     </IonButtons>
                     <IonTitle>Registrar Árbol</IonTitle>
                     <IonButtons slot="end">
-                        <IonButton onClick={handleSave} fill="clear">
+                        <IonButton onClick={handleSave} fill="clear" disabled={isSubmitting}> {/* Deshabilitar el botón si está enviando */}
                             <IonIcon slot="icon-only" icon={checkmark} />
                         </IonButton>
                     </IonButtons>
