@@ -18,6 +18,7 @@ import { useHistory } from 'react-router';
 import { arrowBack, camera, checkmark } from 'ionicons/icons'; 
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { Geolocation } from '@capacitor/geolocation';
+import { getDatabase, push, ref } from 'firebase/database';
 
 const TreeRegister: React.FC = () => {
     const history = useHistory();
@@ -76,7 +77,12 @@ const TreeRegister: React.FC = () => {
         setRegisterDate('');
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
+        if (!code || !speciesId || !dateBirth || !registerDate || !diameter || !latitude || !longitude || !sectorId || !photo) {
+            setAlertMessage('Error por favor, completa todos los campos requeridos.');
+            setShowAlert(true);
+            return; 
+        }
         const newTree: Tree = {
             speciesId,
             code,
@@ -90,6 +96,15 @@ const TreeRegister: React.FC = () => {
             sectorId,
             imageUrl: photo
         };
+        try {
+            const database = getDatabase();
+            const treesRef = ref(database, 'trees');
+            await push(treesRef, newTree);
+        } catch (error) {
+            console.error("Error al guardar el arbol:", error);
+            setAlertMessage('Error al registrar el arbol: ' + error.message);
+            setShowAlert(true);
+        }
 
         console.log(newTree);
         setAlertMessage('Árbol registrado con éxito!');
