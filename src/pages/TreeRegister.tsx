@@ -22,6 +22,7 @@ import { Camera, CameraResultType } from '@capacitor/camera';
 import { Geolocation } from '@capacitor/geolocation';
 import { getDatabase, ref, get, push } from 'firebase/database';
 import { getStorage, ref as storageRef, uploadString, getDownloadURL } from 'firebase/storage';
+import { getAuth } from 'firebase/auth';
 
 const TreeRegister: React.FC = () => {
     const history = useHistory();
@@ -165,9 +166,11 @@ const TreeRegister: React.FC = () => {
 
         // Deshabilitar el botón mientras se está enviando el formulario
         setIsSubmitting(true);
+        const auth = getAuth();
+        const user = auth.currentUser;
 
         const uploadedPhotoUrl = await uploadPhotoToFirebase(photo);
-        const newTree: Tree = {
+        const newTree  = {
             speciesId,
             code,
             dateBirth,
@@ -178,8 +181,9 @@ const TreeRegister: React.FC = () => {
             longitude: parseFloat(longitude),
             modifyDate: '',
             sectorId,
-            imageUrl: uploadedPhotoUrl
-        };
+            imageUrl: uploadedPhotoUrl,
+            createdBy: user?.email
+        } as Tree;
 
         try {
             const database = getDatabase();
@@ -187,7 +191,7 @@ const TreeRegister: React.FC = () => {
             await push(treesRef, newTree);
         } catch (error) {
             console.error("Error al guardar el árbol:", error);
-            setAlertMessage('Error al registrar el árbol: ' + error.message);
+            setAlertMessage('Erro al registrar el árbol')
             setShowAlert(true);
         } finally {
             // Habilitar el botón nuevamente
@@ -195,7 +199,7 @@ const TreeRegister: React.FC = () => {
         }
 
         console.log(newTree);
-        setAlertMessage('Árbol registrado con éxito!');
+        setAlertMessage(`Arbol registrado con éxito por ${user?.displayName || user?.email}!`);
         setShowAlert(true);
         resetFields();
     };
@@ -232,7 +236,6 @@ const TreeRegister: React.FC = () => {
                     <IonSelect
                         value={speciesId}
                         onIonChange={(e) => setSpeciesId(e.detail.value!)}
-                        required
                     >
                         {speciesList.map(species => (
                             <IonSelectOption key={species.id} value={species.id}>
@@ -255,7 +258,6 @@ const TreeRegister: React.FC = () => {
                     <IonSelect
                         value={sectorId}
                         onIonChange={(e) => setSectorId(e.detail.value!)}
-                        required
                     >
                         {sectorsList.map(sector => (
                             <IonSelectOption key={sector.id} value={sector.id}>

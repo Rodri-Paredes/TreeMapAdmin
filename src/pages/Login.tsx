@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   IonContent,
   IonHeader,
@@ -67,6 +67,7 @@ const LoginTree: React.FC = () => {
                 type="text"
                 value={emailOrUsername}
                 onIonChange={(e) => setEmailOrUsername(e.detail.value!)}
+                onInput={(e:any) => setEmailOrUsername(e.detail.value!)}
                 required
               />
             </IonItem>
@@ -76,6 +77,7 @@ const LoginTree: React.FC = () => {
                 type="password"
                 value={password}
                 onIonChange={(e) => setPassword(e.detail.value!)}
+                onInput={(e: any) => setPassword(e.target.value!)}
                 required
               />
             </IonItem>

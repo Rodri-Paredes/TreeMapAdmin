@@ -12,5 +12,6 @@ interface Tree {
         sectorId: string,
         imageUrl: string,
         species?: Species,
-        sector?: Sector
+        sector?: Sector,
+        createdBy: string;
 }
