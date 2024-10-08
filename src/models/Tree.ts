@@ -1,4 +1,5 @@
 interface Tree {
+        id: string;
         speciesId: string,
         code: string,
         dateBirth: string,

@@ -50,12 +50,13 @@ const useFetchTrees = (setTrees: React.Dispatch<React.SetStateAction<Tree[]>>, c
                             const dataItem = snapshot.val();
             
                             if (dataItem) {
-                                const displayItem: Tree[] = Object.values(dataItem).map((value) => {
+                                const displayItem = Object.entries(dataItem).map(([key, value]) => {
                                     // Convert to Tree type
                                     const tree = value as Tree;
             
                                     return {
                                         ...tree,
+                                        id: key,
                                         species: speciesArray[tree.speciesId] || undefined,  // Assign the species object or undefined
                                         sector: sectorArray[tree.sectorId] || undefined     // Assign the sector object or undefined
                                     } as Tree; // Convert to Tree type
