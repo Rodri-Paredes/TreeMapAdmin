@@ -5,6 +5,7 @@ import { mapOutline, addCircleOutline, logOutOutline, trash } from 'ionicons/ico
 import useFetchTrees from '../hooks/useFetchTrees';
 import config from './../firebaseConfig';
 import { getDatabase, ref, remove } from 'firebase/database';
+import useLogout from '../hooks/useLogout';
 
 const TreeList: React.FC = () => {
     const history = useHistory();
@@ -14,6 +15,8 @@ const TreeList: React.FC = () => {
     const [treeToDelete, setTreeToDelete] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string>('');
     useFetchTrees(setTrees, config);
+    const logout = useLogout();
+    
 
     const handleViewMap = () => {
         history.push('/map');
@@ -46,6 +49,11 @@ const TreeList: React.FC = () => {
         <IonPage>
             <IonHeader>
                 <IonToolbar>
+                <IonButtons slot="start">
+                        <IonButton onClick={logout} fill="clear" size="small">
+                            <IonIcon slot="icon-only" icon={logOutOutline} />
+                        </IonButton>
+                    </IonButtons>
                     <IonTitle>Lista de Árboles</IonTitle>
                     <IonButtons slot="end">
                         <IonButton onClick={handleCreateNew} fill="clear" size="small">

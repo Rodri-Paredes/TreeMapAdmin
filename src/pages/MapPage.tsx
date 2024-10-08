@@ -4,9 +4,10 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useHistory } from 'react-router';
-import { listSharp } from 'ionicons/icons';
+import { listSharp, logOutOutline } from 'ionicons/icons';
 import useFetchTrees from '../hooks/useFetchTrees';
 import config from './../firebaseConfig';
+import useLogout from '../hooks/useLogout';
 
 // Configuración de iconos de Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -28,12 +29,18 @@ const MapPage: React.FC = () => {
   const handleViewList = () => {
     history.push('/tree-list');  // Cambia la ruta a "tree-list"
   };
+  const logout = useLogout();
   const [trees, setTrees] = useState<Tree[]>([]);
   useFetchTrees(setTrees,config)
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
+        <IonButtons slot="start">
+            <IonButton onClick={logout} fill="clear" size="small">
+              <IonIcon slot="icon-only" icon={logOutOutline} />
+            </IonButton>
+          </IonButtons>
           <IonTitle>Mapa de Árboles</IonTitle>
           <IonButtons slot="end">
             <IonButton onClick={handleViewList} fill="clear" size="small">

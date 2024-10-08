@@ -168,7 +168,6 @@ const TreeRegister: React.FC = () => {
 
         const uploadedPhotoUrl = await uploadPhotoToFirebase(photo);
         const newTree: Tree = {
-            id,
             speciesId,
             code,
             dateBirth,
