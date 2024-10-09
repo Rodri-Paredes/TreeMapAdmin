@@ -21,7 +21,10 @@ const useFetchTrees = (setTrees: React.Dispatch<React.SetStateAction<Tree[]>>, c
                                 {
                                     commonName: (value as Species).commonName,
                                     scientificName: (value as Species).scientificName,
-                                    foliage: (value as Species).foliage
+                                    foliage: (value as Species).foliage,
+                                    color: (value as Species).color,
+                                    description: (value as Species).description,
+                                    imageUrl: (value as Species).imageUrl
                                 }
                             ])
                         );

@@ -3,132 +3,177 @@
       "color": "#FF6F61",
       "commonName": "Pata de toro",
       "foliage": "Caducifolio",
-      "scientificName": "Bauhinia forficata"
+      "scientificName": "Bauhinia forficata",
+      "description": "Árbol ornamental que produce flores blancas o rosadas.",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FWhitebarkPine_7467t.jpg?alt=media&token=fc1e504c-81c5-4dbb-ad98-3a95aa6f9f51"
     },
     "species10": {
       "color": "#45B8AC",
       "commonName": "Tajibo",
       "foliage": "Caducifolio",
-      "scientificName": "Handroanthus impetiginosus"
+      "scientificName": "Handroanthus impetiginosus",
+      "description": "Árbol tropical que produce flores de color violeta o amarillo.",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FWhitebarkPine_7467t.jpg?alt=media&token=fc1e504c-81c5-4dbb-ad98-3a95aa6f9f51"
     },
     "species11": {
       "color": "#EFC050",
       "commonName": "Álamo",
       "foliage": "Caducifolio",
-      "scientificName": "Populus alba"
+      "scientificName": "Populus alba",
+      "description": "Árbol alto con hojas plateadas y corteza lisa y blanca.",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FWhitebarkPine_7467t.jpg?alt=media&token=fc1e504c-81c5-4dbb-ad98-3a95aa6f9f51"
     },
     "species12": {
       "color": "#5B5EA6",
       "commonName": "Jacarandá",
       "foliage": "Caducifolio",
-      "scientificName": "Jacaranda mimosifolia"
+      "scientificName": "Jacaranda mimosifolia",
+      "description": "Árbol ornamental que produce flores azules o violetas.",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FWhitebarkPine_7467t.jpg?alt=media&token=fc1e504c-81c5-4dbb-ad98-3a95aa6f9f51"
     },
     "species13": {
       "color": "#9B2335",
       "commonName": "Pacay",
       "foliage": "Caducifolio",
-      "scientificName": "Inga edulis"
+      "scientificName": "Inga edulis",
+      "description": "Árbol tropical que produce vainas largas y comestibles.",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FWhitebarkPine_7467t.jpg?alt=media&token=fc1e504c-81c5-4dbb-ad98-3a95aa6f9f51"
     },
     "species14": {
       "color": "#955251",
       "commonName": "Branchichito",
       "foliage": "Perenne",
-      "scientificName": "Schinus molle"
+      "scientificName": "Schinus molle",
+      "description": "Árbol aromático de follaje perenne, también conocido como falso pimentero.",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FWhitebarkPine_7467t.jpg?alt=media&token=fc1e504c-81c5-4dbb-ad98-3a95aa6f9f51"
     },
     "species15": {
       "color": "#B565A7",
       "commonName": "Guayaba",
       "foliage": "Perenne",
-      "scientificName": "Psidium guajava"
+      "scientificName": "Psidium guajava",
+      "description": "Árbol frutal tropical que produce frutos de pulpa dulce y rosada.",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FWhitebarkPine_7467t.jpg?alt=media&token=fc1e504c-81c5-4dbb-ad98-3a95aa6f9f51"
     },
     "species16": {
       "color": "#92A8D1",
       "commonName": "Ciruela",
       "foliage": "Caducifolio",
-      "scientificName": "Prunus domestica"
+      "scientificName": "Prunus domestica",
+      "description": "Árbol frutal que produce ciruelas de color púrpura o amarillo.",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FWhitebarkPine_7467t.jpg?alt=media&token=fc1e504c-81c5-4dbb-ad98-3a95aa6f9f51"
     },
     "species17": {
       "color": "#F7CAC9",
       "commonName": "Chirimoya",
       "foliage": "Caducifolio",
-      "scientificName": "Annona cherimola"
+      "scientificName": "Annona cherimola",
+      "description": "Árbol frutal que produce frutos dulces con pulpa blanca y cremosa.",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FWhitebarkPine_7467t.jpg?alt=media&token=fc1e504c-81c5-4dbb-ad98-3a95aa6f9f51"
     },
     "species18": {
       "color": "#88B04B",
       "commonName": "Limonero",
       "foliage": "Perenne",
-      "scientificName": "Citrus limon"
+      "scientificName": "Citrus limon",
+      "description": "Árbol frutal que produce limones, ricos en vitamina C.",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FWhitebarkPine_7467t.jpg?alt=media&token=fc1e504c-81c5-4dbb-ad98-3a95aa6f9f51"
     },
     "species19": {
       "color": "#D2B48C",
       "commonName": "Tipuana",
       "foliage": "Caducifolio",
-      "scientificName": "Tipuana tipu"
+      "scientificName": "Tipuana tipu",
+      "description": "Árbol grande con flores amarillas y hojas compuestas.",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FWhitebarkPine_7467t.jpg?alt=media&token=fc1e504c-81c5-4dbb-ad98-3a95aa6f9f51"
     },
     "species2": {
       "color": "#6B5B95",
       "commonName": "Laurel",
       "foliage": "Perenne",
-      "scientificName": "Laurus nobilis"
+      "scientificName": "Laurus nobilis",
+      "description": "Árbol perenne con hojas aromáticas, utilizadas en la cocina.",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FWhitebarkPine_7467t.jpg?alt=media&token=fc1e504c-81c5-4dbb-ad98-3a95aa6f9f51"
     },
     "species20": {
       "color": "#FFD700",
       "commonName": "Peral",
       "foliage": "Caducifolio",
-      "scientificName": "Pyrus communis"
+      "scientificName": "Pyrus communis",
+      "description": "Árbol frutal que produce peras dulces y jugosas.",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FWhitebarkPine_7467t.jpg?alt=media&token=fc1e504c-81c5-4dbb-ad98-3a95aa6f9f51"
     },
     "species21": {
       "color": "#FFA500",
       "commonName": "Fresno",
       "foliage": "Pinnaticompuestas",
-      "scientificName": "Fraxinus"
+      "scientificName": "Fraxinus",
+      "description": "Árbol grande con hojas pinnadas y madera valiosa.",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FWhitebarkPine_7467t.jpg?alt=media&token=fc1e504c-81c5-4dbb-ad98-3a95aa6f9f51"
     },
     "species22": {
       "color": "#FFFFFF",
       "commonName": "Otro",
       "foliage": "Otro",
-      "scientificName": "Otro"
+      "scientificName": "Otro",
+      "description": "Especie no especificada o desconocida.",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FWhitebarkPine_7467t.jpg?alt=media&token=fc1e504c-81c5-4dbb-ad98-3a95aa6f9f51"
     },
     "species3": {
       "color": "#88B04B",
       "commonName": "Olivo",
       "foliage": "Perenne",
-      "scientificName": "Olea europaea"
+      "scientificName": "Olea europaea",
+      "description": "Árbol perenne que produce aceitunas, fuente de aceite de oliva.",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FWhitebarkPine_7467t.jpg?alt=media&token=fc1e504c-81c5-4dbb-ad98-3a95aa6f9f51"
     },
     "species4": {
       "color": "#F7CAC9",
       "commonName": "Tipuana",
       "foliage": "Caducifolio",
-      "scientificName": "Tipuana tipu"
+      "scientificName": "Tipuana tipu",
+      "description": "Árbol grande con flores amarillas y hojas compuestas.",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FWhitebarkPine_7467t.jpg?alt=media&token=fc1e504c-81c5-4dbb-ad98-3a95aa6f9f51"
     },
     "species5": {
       "color": "#92A8D1",
       "commonName": "Retama",
       "foliage": "Caducifolio",
-      "scientificName": "Spartium junceum"
+      "scientificName": "Spartium junceum",
+      "description": "Arbusto caducifolio con flores amarillas y tallos verdes.",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FWhitebarkPine_7467t.jpg?alt=media&token=fc1e504c-81c5-4dbb-ad98-3a95aa6f9f51"
     },
     "species6": {
       "color": "#955251",
       "commonName": "Bambú",
       "foliage": "Perenne",
-      "scientificName": "Bambusoideae"
+      "scientificName": "Bambusoideae",
+      "description": "Planta de tallos huecos y crecimiento rápido, utilizada en la construcción.",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FWhitebarkPine_7467t.jpg?alt=media&token=fc1e504c-81c5-4dbb-ad98-3a95aa6f9f51"
     },
     "species7": {
       "color": "#B565A7",
       "commonName": "Carnavalito",
       "foliage": "Caducifolio",
-      "scientificName": "Poinciana pulcherrima"
+      "scientificName": "Poinciana pulcherrima",
+      "description": "Arbusto que produce flores rojas, naranjas o amarillas muy vistosas.",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FWhitebarkPine_7467t.jpg?alt=media&token=fc1e504c-81c5-4dbb-ad98-3a95aa6f9f51"
     },
     "species8": {
       "color": "#009B77",
       "commonName": "Falso Ciprés de Lawson",
       "foliage": "Perenne",
-      "scientificName": "Chamaecyparis lawsoniana"
+      "scientificName": "Chamaecyparis lawsoniana",
+      "description": "Árbol conífero perenne de follaje denso y piramidal.",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FWhitebarkPine_7467t.jpg?alt=media&token=fc1e504c-81c5-4dbb-ad98-3a95aa6f9f51"
     },
     "species9": {
       "color": "#DD4124",
       "commonName": "Bingo de Oro",
       "foliage": "Caducifolio",
-      "scientificName": "Bauhinia variegata"
+      "scientificName": "Bauhinia variegata",
+      "description": "Árbol ornamental que produce flores grandes y vistosas.",
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FWhitebarkPine_7467t.jpg?alt=media&token=fc1e504c-81c5-4dbb-ad98-3a95aa6f9f51"
     }
   }
+  
