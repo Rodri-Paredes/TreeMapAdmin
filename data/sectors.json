@@ -1,0 +1,50 @@
+{
+    "sector1": {
+      "name": "Parqueo",
+      "polygon": "Poligono Parqueo"
+    },
+    "sector10": {
+      "name": "Bloque C",
+      "polygon": "Poligono Bloque C"
+    },
+    "sector11": {
+      "name": "Auditorio Retamas",
+      "polygon": "Poligono Auditorio Retamas"
+    },
+    "sector12": {
+      "name": "Bloque F",
+      "polygon": "Poligono Bloque F"
+    },
+    "sector2": {
+      "name": "Biblioteca",
+      "polygon": "Poligono Biblioteca"
+    },
+    "sector3": {
+      "name": "Coliseo",
+      "polygon": "Poligono Coliseo"
+    },
+    "sector4": {
+      "name": "Medicina",
+      "polygon": "Poligono Medicina"
+    },
+    "sector5": {
+      "name": "Bosque Norte",
+      "polygon": "Poligono Bosque Norte"
+    },
+    "sector6": {
+      "name": "Arquitectura",
+      "polygon": "Poligono Arquitectura"
+    },
+    "sector7": {
+      "name": "Tecnología",
+      "polygon": "Poligono Tecnología"
+    },
+    "sector8": {
+      "name": "Comedor",
+      "polygon": "Poligono Comedor"
+    },
+    "sector9": {
+      "name": "Bloque D",
+      "polygon": "Poligono Bloque D"
+    }
+  }
