@@ -14,17 +14,26 @@ import {
   IonAlert,
   IonDatetime,
   IonSelect,
-  IonSelectOption 
+  IonSelectOption,
+  IonLoading
 } from '@ionic/react';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import { arrowBack, camera, checkmark } from 'ionicons/icons'; 
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { Geolocation } from '@capacitor/geolocation';
-import { getDatabase, ref, get, push } from 'firebase/database';
+import { getDatabase, ref, get, push, update } from 'firebase/database';
 import { getStorage, ref as storageRef, uploadString, getDownloadURL } from 'firebase/storage';
 import { getAuth } from 'firebase/auth';
+import imageCompression from 'browser-image-compression';
 
-const TreeRegister: React.FC = () => {
+
+interface TreeRegisterProps {
+    treeData?: Tree;
+}
+
+const TreeRegister: React.FC<TreeRegisterProps> = () => {
+    const location = useLocation<TreeRegisterProps>();
+    const treeData = location.state?.treeData;
     const history = useHistory();
     const [code, setCode] = useState('');
     const [speciesId, setSpeciesId] = useState('');
@@ -33,6 +42,7 @@ const TreeRegister: React.FC = () => {
     const [latitude, setLatitude] = useState('');
     const [longitude, setLongitude] = useState('');
     const [photo, setPhoto] = useState('');
+    const [oldPhoto, setOldPhoto] = useState('');
     const [alertMessage, setAlertMessage] = useState('');
     const [showAlert, setShowAlert] = useState(false);
     const [dateBirth, setDateBirth] = useState<string>(new Date().toISOString().split('T')[0]); // Valor por defecto
@@ -47,8 +57,20 @@ const TreeRegister: React.FC = () => {
     useEffect(() => {
         loadSpecies();
         loadSectors();
+
+        if (treeData) {
+            setCode(treeData.code);
+            setSpeciesId(treeData.speciesId);
+            setDiameter(treeData.diameter);
+            setSectorId(treeData.sectorId);
+            setLatitude(treeData.latitude.toString());
+            setLongitude(treeData.longitude.toString());
+            setDateBirth(treeData.dateBirth);
+            setRegisterDate(treeData.registerDate);
+            setOldPhoto(treeData.imageUrl);
+        }
     }, []);
-    
+
     useEffect(() => {
         // Establecer el valor por defecto para speciesId
         if (speciesList.length > 0) {
@@ -125,6 +147,7 @@ const TreeRegister: React.FC = () => {
                 resultType: CameraResultType.Base64,
             });
             setPhoto(image.base64String || '');
+            setOldPhoto('');
         } catch (error) {
             console.error(error);
             setAlertMessage('Error al tomar la foto');
@@ -132,11 +155,62 @@ const TreeRegister: React.FC = () => {
         }
     };
 
-    const uploadPhotoToFirebase = async (base64String: string) => {
+    const compressImage = async (base64String: string) => {
         try {
+            // Añadir el prefijo MIME a la cadena Base64
+            const imagePrefix = "data:image/jpeg;base64,";
+            const fullBase64String = imagePrefix + base64String;
+
+            // Realiza el fetch con el string Base64 completo
+            const response = await fetch(fullBase64String);
+            if (!response.ok) {
+                throw new Error('Error al realizar fetch');
+            }
+            const blob = await response.blob();
+
+            // Crear un objeto File a partir del blob
+            const file = new File([blob], 'image.jpg', { type: blob.type });
+    
+            const options = {
+                maxSizeMB: 0.5,
+                maxWidthOrHeight: 800,
+                useWebWorker: true,
+            };
+    
+            // Comprimir la imagen
+            const compressedFile = await imageCompression(file, options);
+    
+            // Convertir el archivo comprimido de nuevo a base64
+            const compressedBase64 = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const compressedBase64 = reader.result as string;
+                    resolve(compressedBase64.split(',')[1]);//No devolver el prefix o falla firebase
+                };
+                reader.onerror = () => reject(new Error('Error al leer el archivo comprimido'));
+                reader.readAsDataURL(compressedFile);
+            });
+    
+            return compressedBase64; // Retornar la imagen comprimida en base64
+        } catch (error) {
+            console.error('Error al comprimir la imagen:', error);
+            throw new Error('Error al comprimir la imagen');
+        }
+    };
+
+    const uploadPhotoToFirebase = async (base64String: string) => {
+        if(!base64String){
+            return '';
+        }
+
+        try {
+            const compressedBase64 = await compressImage(base64String);
             const storage = getStorage();
             const photoRef = storageRef(storage, `trees/${new Date().getTime()}.jpg`);
-            await uploadString(photoRef, base64String, 'base64');
+            if (typeof compressedBase64 !== 'string') {
+                throw new Error('La imagen comprimida no es un string válido.');
+            }
+            await uploadString(photoRef, compressedBase64, 'base64');
             const url = await getDownloadURL(photoRef);
             return url;
         } catch (error) {
@@ -158,7 +232,7 @@ const TreeRegister: React.FC = () => {
     };
 
     const handleSave = async () => {
-        if (!code || !speciesId || !dateBirth || !registerDate || !diameter || !latitude || !longitude || !sectorId || !photo) {
+        if (!code || !speciesId || !dateBirth || !registerDate || !diameter || !latitude || !longitude || !sectorId || (!photo && !oldPhoto)) {
             setAlertMessage('Error: por favor, completa todos los campos requeridos.');
             setShowAlert(true);
             return; 
@@ -168,8 +242,12 @@ const TreeRegister: React.FC = () => {
         setIsSubmitting(true);
         const auth = getAuth();
         const user = auth.currentUser;
-
-        const uploadedPhotoUrl = await uploadPhotoToFirebase(photo);
+        let uploadedPhotoUrl;
+        if(!oldPhoto){
+            uploadedPhotoUrl = await uploadPhotoToFirebase(photo);
+        }else{
+            uploadedPhotoUrl = oldPhoto;
+        }
         const newTree  = {
             speciesId,
             code,
@@ -186,9 +264,17 @@ const TreeRegister: React.FC = () => {
         } as Tree;
 
         try {
-            const database = getDatabase();
-            const treesRef = ref(database, 'trees');
-            await push(treesRef, newTree);
+            if(treeData){
+                const database = getDatabase();
+                const treeRef = ref(database, `trees/${treeData.id}`);
+                newTree.modifyDate = new Date().toISOString();
+                await update(treeRef, newTree);
+                handleBack();
+            }else{
+                const database = getDatabase();
+                const treesRef = ref(database, 'trees');
+                await push(treesRef, newTree);
+            }
         } catch (error) {
             console.error("Error al guardar el árbol:", error);
             setAlertMessage('Erro al registrar el árbol')
@@ -204,6 +290,34 @@ const TreeRegister: React.FC = () => {
         resetFields();
     };
 
+    const generateCode = () => {
+        const selectedSpecies = speciesList.find(species => species.id === speciesId);
+        if (selectedSpecies) {
+            // Generar código usando las 3 primeras letras del commonName y convertirlas a mayúsculas
+            const letters = selectedSpecies.commonName.substring(0, 3).toUpperCase();
+            
+            // Función para generar 4 caracteres aleatorios (letras y números)
+            const generateRandomChars = (length: number): string => {
+                const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'; // Letras mayúsculas y números
+                let result = '';
+                for (let i = 0; i < length; i++) {
+                    const randomIndex = Math.floor(Math.random() * characters.length);
+                    result += characters.charAt(randomIndex); // Agregar carácter aleatorio
+                }
+                return result;
+            };
+    
+            // Generar 4 caracteres aleatorios
+            const randomChars = generateRandomChars(4);
+    
+            // Combinar las letras y los caracteres aleatorios
+            const code = `${letters}-${randomChars}`;
+    
+            setCode(code); // Asignar el código generado
+        }
+    };
+    
+
     return (
         <IonPage>
             <IonHeader>
@@ -213,7 +327,7 @@ const TreeRegister: React.FC = () => {
                             <IonIcon slot="icon-only" icon={arrowBack} />
                         </IonButton>
                     </IonButtons>
-                    <IonTitle>Registrar Árbol</IonTitle>
+                    <IonTitle>{(!treeData)?'Registrar Árbol':'Actualizar Árbol'}</IonTitle>
                     <IonButtons slot="end">
                         <IonButton onClick={handleSave} fill="clear" disabled={isSubmitting}> {/* Deshabilitar el botón si está enviando */}
                             <IonIcon slot="icon-only" icon={checkmark} />
@@ -223,14 +337,6 @@ const TreeRegister: React.FC = () => {
             </IonHeader>
 
             <IonContent className="ion-padding">
-                <IonItem>
-                    <IonLabel position="stacked">Código</IonLabel>
-                    <IonInput 
-                        value={code} 
-                        onIonChange={(e) => setCode(e.detail.value!)} 
-                        required 
-                    />
-                </IonItem>
                 <IonItem>
                     <IonLabel position="stacked">Especie</IonLabel>
                     <IonSelect
@@ -245,15 +351,6 @@ const TreeRegister: React.FC = () => {
                     </IonSelect>
                 </IonItem>
                 <IonItem>
-                    <IonLabel position="stacked">Diámetro (cm)</IonLabel>
-                    <IonInput 
-                        type="number" 
-                        value={diameter} 
-                        onIonChange={(e) => setDiameter(parseFloat(e.detail.value!))} 
-                        required 
-                    />
-                </IonItem>
-                <IonItem>
                     <IonLabel position="stacked">Sector</IonLabel>
                     <IonSelect
                         value={sectorId}
@@ -265,6 +362,24 @@ const TreeRegister: React.FC = () => {
                             </IonSelectOption>
                         ))}
                     </IonSelect>
+                </IonItem>
+                <IonItem>
+                    <IonLabel position="stacked">Diámetro (cm)</IonLabel>
+                    <IonInput 
+                        type="number" 
+                        value={diameter} 
+                        onIonChange={(e) => setDiameter(parseFloat(e.detail.value!))} 
+                        required 
+                    />
+                </IonItem>
+                <IonItem>
+                    <IonLabel position="stacked">Código</IonLabel>
+                    <IonInput 
+                        value={code} 
+                        onIonChange={(e) => setCode(e.detail.value!)} 
+                        required 
+                    />
+                    <IonButton onClick={generateCode}>Generar Código</IonButton>
                 </IonItem>
                 <IonItem>
                     <IonLabel position="stacked">Latitud</IonLabel>
@@ -313,8 +428,15 @@ const TreeRegister: React.FC = () => {
                 {photo && (
                    <img src={`data:image/jpeg;base64,${photo}`} alt="Arbol" style={{ width: '100%', marginTop: '10px' }} />
                 )}
+                {oldPhoto && (
+                   <img src={`${oldPhoto}`} alt="Arbol" style={{ width: '100%', marginTop: '10px' }} />
+                )}
             </IonContent>
 
+            <IonLoading
+                    isOpen={isSubmitting}
+                    message={'Guardando...'}
+            />
             <IonAlert
                 isOpen={showAlert}
                 onDidDismiss={() => setShowAlert(false)}

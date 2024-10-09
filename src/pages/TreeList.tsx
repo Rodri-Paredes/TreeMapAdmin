@@ -43,7 +43,13 @@ const TreeList: React.FC = () => {
         setTreeToDelete(treeId); // Guardar el ID del árbol a eliminar
         setShowAlert(true); // Mostrar alerta de confirmación
     };
-    
+
+    const handleSelectTree = (tree: Tree) => {
+        history.push({
+            pathname: '/tree-register',
+            state: { treeData: tree },
+        });
+    };
 
     return (
         <IonPage>
@@ -65,7 +71,7 @@ const TreeList: React.FC = () => {
             <IonContent>
                 <IonList>
                     {trees.map((tree) => (
-                        <IonItem key={tree.id}> {/* Asegúrate de usar un identificador único */}
+                         <IonItem key={tree.id} button onClick={() => handleSelectTree(tree)}>
                             <IonLabel>
                                 <h2>{tree.code}</h2>
                                 <p>{tree.species?.commonName}</p>
@@ -75,7 +81,7 @@ const TreeList: React.FC = () => {
                             <div className="tree-img-wrapper">
                                 <IonImg className="tree-img" src={tree.imageUrl} alt={tree.code} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
                             </div>
-                            <IonButton fill="clear" color="danger" onClick={() => confirmDeleteTree(tree.id)}>
+                            <IonButton fill="clear" color="danger" onClick={(e) => {e.stopPropagation(); confirmDeleteTree(tree.id);}}>
                                 <IonIcon icon={trash} />
                             </IonButton>
                         </IonItem>
