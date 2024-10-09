@@ -4,6 +4,5 @@ interface Species {
     foliage: string,
     imageUrl: string,
     color: string,
-    description: string,
-    prefix: string
+    description: string
 }

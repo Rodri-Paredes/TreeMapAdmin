@@ -1,22 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonImg, IonFab, IonFabButton, IonIcon, IonButton, IonButtons, IonAlert } from '@ionic/react';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonImg, IonFab, IonFabButton, IonIcon, IonButton, IonButtons, IonAlert, IonSelect, IonSelectOption } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
 import { mapOutline, addCircleOutline, logOutOutline, trash } from 'ionicons/icons';
 import useFetchTrees from '../hooks/useFetchTrees';
 import config from './../firebaseConfig';
-import { getDatabase, ref, remove } from 'firebase/database';
+import { getDatabase, ref, remove, get } from 'firebase/database';
 import useLogout from '../hooks/useLogout';
 
 const TreeList: React.FC = () => {
     const history = useHistory();
-    const [trees, setTrees] = useState<Tree[]>([]); // Tipar el estado con la interfaz Tree
+    const [trees, setTrees] = useState<Tree[]>([]);
     const [showAlert, setShowAlert] = useState(false);
     const [showErrorAlert, setShowErrorAlert] = useState(false);
     const [treeToDelete, setTreeToDelete] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string>('');
-    useFetchTrees(setTrees, config);
+    const [selectedSpecies, setSelectedSpecies] = useState<string>(''); // Especie seleccionada
+    const [speciesList, setSpeciesList] = useState<any[]>([]); // Lista de especies
     const logout = useLogout();
-    
+
+    useFetchTrees(setTrees, config);
 
     const handleViewMap = () => {
         history.push('/map');
@@ -26,36 +28,56 @@ const TreeList: React.FC = () => {
         history.push('/tree-register');
     };
 
+    const loadSpecies = async () => {
+        try {
+            const database = getDatabase();
+            const speciesRef = ref(database, 'species'); // Ajusta esta ruta según tu base de datos
+            const snapshot = await get(speciesRef);
+            
+            if (snapshot.exists()) {
+                const speciesData = snapshot.val();
+                const speciesArray = Object.keys(speciesData).map(key => ({
+                    id: key,
+                    ...speciesData[key]
+                }));
+                setSpeciesList(speciesArray);
+            }
+        } catch (error) {
+            console.error("Error al cargar las especies:", error);
+        }
+    };
+
+    useEffect(() => {
+        loadSpecies();
+    }, []);
+
     const handleDeleteTree = async (treeId: string) => {
         try {
             const database = getDatabase();
-            const treeRef = ref(database, `trees/${treeId}`); // Ajusta la ruta según tu estructura de datos
-            await remove(treeRef); // Eliminar el árbol de Firebase
-            setTrees((prevTrees) => prevTrees.filter(tree => tree.id !== treeId)); // Filtrar el árbol eliminado en el estado
+            const treeRef = ref(database, `trees/${treeId}`);
+            await remove(treeRef);
+            setTrees((prevTrees) => prevTrees.filter(tree => tree.id !== treeId));
         } catch (error) {
             console.error("Error al eliminar el árbol:", error);
             setErrorMessage("Error al eliminar el árbol. Inténtalo de nuevo.");
-            setShowErrorAlert(true); // Mostrar alerta de error si falla
+            setShowErrorAlert(true);
         }
     };
-    
+
     const confirmDeleteTree = (treeId: string) => {
-        setTreeToDelete(treeId); // Guardar el ID del árbol a eliminar
-        setShowAlert(true); // Mostrar alerta de confirmación
+        setTreeToDelete(treeId);
+        setShowAlert(true);
     };
 
-    const handleSelectTree = (tree: Tree) => {
-        history.push({
-            pathname: '/tree-register',
-            state: { treeData: tree },
-        });
-    };
+    const filteredTrees = selectedSpecies 
+        ? trees.filter(tree => tree.speciesId === selectedSpecies)
+        : trees;
 
     return (
         <IonPage>
             <IonHeader>
                 <IonToolbar>
-                <IonButtons slot="start">
+                    <IonButtons slot="start">
                         <IonButton onClick={logout} fill="clear" size="small">
                             <IonIcon slot="icon-only" icon={logOutOutline} />
                         </IonButton>
@@ -69,9 +91,25 @@ const TreeList: React.FC = () => {
                 </IonToolbar>
             </IonHeader>
             <IonContent>
+                <IonItem>
+                    <IonLabel>Especie</IonLabel>
+                    <IonSelect
+                        value={selectedSpecies}
+                        placeholder="Seleccionar especie"
+                        onIonChange={(e) => setSelectedSpecies(e.detail.value!)}
+                    >
+                        <IonSelectOption value="">Todos</IonSelectOption>
+                        {speciesList.map(species => (
+                            <IonSelectOption key={species.id} value={species.id}>
+                                {species.commonName}
+                            </IonSelectOption>
+                        ))}
+                    </IonSelect>
+                </IonItem>
+
                 <IonList>
-                    {trees.map((tree) => (
-                         <IonItem key={tree.id} button onClick={() => handleSelectTree(tree)}>
+                    {filteredTrees.map((tree) => (
+                        <IonItem key={tree.id} button onClick={() => history.push({ pathname: '/tree-register', state: { treeData: tree } })}>
                             <IonLabel>
                                 <h2>{tree.code}</h2>
                                 <p>{tree.species?.commonName}</p>
@@ -93,6 +131,7 @@ const TreeList: React.FC = () => {
                         <IonIcon icon={mapOutline} />
                     </IonFabButton>
                 </IonFab>
+
                 <IonAlert
                     isOpen={showAlert}
                     onDidDismiss={() => setShowAlert(false)}
@@ -102,17 +141,15 @@ const TreeList: React.FC = () => {
                         {
                             text: 'Cancelar',
                             role: 'cancel',
-                            handler: () => setTreeToDelete(null), // Restablece el ID del árbol a eliminar
+                            handler: () => setTreeToDelete(null),
                         },
                         {
                             text: 'Eliminar',
                             handler: () => {
                                 if (treeToDelete) {
-                                    handleDeleteTree(treeToDelete); // Eliminar el árbol si existe el ID
-                                } else {
-                                    console.warn("No hay árbol seleccionado para eliminar.");
+                                    handleDeleteTree(treeToDelete);
                                 }
-                                setTreeToDelete(null); // Restablece el ID del árbol después de eliminar
+                                setTreeToDelete(null);
                             },
                         },
                     ]}
@@ -125,7 +162,6 @@ const TreeList: React.FC = () => {
                     message={errorMessage}
                     buttons={['OK']}
                 />
-
             </IonContent>
         </IonPage>
     );
