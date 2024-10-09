@@ -66,8 +66,7 @@ const LoginTree: React.FC = () => {
               <IonInput
                 type="text"
                 value={emailOrUsername}
-                onIonChange={(e) => setEmailOrUsername(e.detail.value!)}
-                onInput={(e:any) => setEmailOrUsername(e.detail.value!)}
+                onInput={(e: any) => setEmailOrUsername(e.target.value!)}
                 required
               />
             </IonItem>
@@ -76,7 +75,6 @@ const LoginTree: React.FC = () => {
               <IonInput
                 type="password"
                 value={password}
-                onIonChange={(e) => setPassword(e.detail.value!)}
                 onInput={(e: any) => setPassword(e.target.value!)}
                 required
               />
