@@ -129,7 +129,11 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
 
     const handleGetLocation = async () => {
         try {
-            const coordinates = await Geolocation.getCurrentPosition();
+            const coordinates = await Geolocation.getCurrentPosition({
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0,
+            });
             setLatitude(coordinates.coords.latitude.toString());
             setLongitude(coordinates.coords.longitude.toString());
         } catch (error) {
