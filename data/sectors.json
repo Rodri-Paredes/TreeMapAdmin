@@ -1,50 +1,200 @@
 {
-    "sector1": {
+  "sector1": {
       "name": "Parqueo",
-      "polygon": "Poligono Parqueo"
-    },
-    "sector10": {
-      "name": "Bloque C",
-      "polygon": "Poligono Bloque C"
-    },
-    "sector11": {
-      "name": "Auditorio Retamas",
-      "polygon": "Poligono Auditorio Retamas"
-    },
-    "sector12": {
-      "name": "Bloque F",
-      "polygon": "Poligono Bloque F"
-    },
-    "sector2": {
-      "name": "Biblioteca",
-      "polygon": "Poligono Biblioteca"
-    },
-    "sector3": {
-      "name": "Coliseo",
-      "polygon": "Poligono Coliseo"
-    },
-    "sector4": {
-      "name": "Medicina",
-      "polygon": "Poligono Medicina"
-    },
-    "sector5": {
-      "name": "Bosque Norte",
-      "polygon": "Poligono Bosque Norte"
-    },
-    "sector6": {
+      "polygon": "Poligono Parqueo",
+      "polygonPath": [
+          { "lat": -17.332976, "lng": -66.226799 },
+          { "lat": -17.333062, "lng": -66.226059 },
+          { "lat": -17.333755, "lng": -66.226063 },
+          { "lat": -17.333979, "lng": -66.226792 }
+      ],
+      "color": "#E74C3C"
+  },
+  "sector2": {
+      "name": "Auditorio",
+      "polygon": "Poligono 4",
+      "polygonPath": [
+          { "lat": -17.332452, "lng": -66.226787 },
+          { "lat": -17.332474, "lng": -66.226086 },
+          { "lat": -17.332945, "lng": -66.226059 },
+          { "lat": -17.332954, "lng": -66.226787 }
+      ],
+      "color": "#E74C3C"
+  },
+  "sector3": {
+      "name": "Bloque S",
+      "polygon": "Poligono 5",
+      "polygonPath": [
+          { "lat": -17.331867, "lng": -66.226796 },
+          { "lat": -17.331889, "lng": -66.226059 },
+          { "lat": -17.332439, "lng": -66.226077 },
+          { "lat": -17.332430, "lng": -66.226805 }
+      ],
+      "color": "#3498DB"
+  },
+  "sector4": {
+      "name": "Aula de Prácticas",
+      "polygon": "Poligono 6",
+      "polygonPath": [
+          { "lat": -17.331110, "lng": -66.226778 },
+          { "lat": -17.331162, "lng": -66.226137 },
+          { "lat": -17.331857, "lng": -66.226034 },
+          { "lat": -17.331859, "lng": -66.226813 }
+      ],
+      "color": "#2ECC71"
+  },
+  "sector5": {
       "name": "Arquitectura",
-      "polygon": "Poligono Arquitectura"
-    },
-    "sector7": {
-      "name": "Tecnología",
-      "polygon": "Poligono Tecnología"
-    },
-    "sector8": {
+      "polygon": "Poligono 7",
+      "polygonPath": [
+          { "lat": -17.330629, "lng": -66.226724 },
+          { "lat": -17.330686, "lng": -66.226048 },
+          { "lat": -17.331118, "lng": -66.226106 },
+          { "lat": -17.331099, "lng": -66.226753 }
+      ],
+      "color": "#FF33A8"
+  },
+  "sector6": {
+      "name": "Coliseo",
+      "polygon": "Poligono 8",
+      "polygonPath": [
+          { "lat": -17.330892, "lng": -66.225756 },
+          { "lat": -17.331016, "lng": -66.224966 },
+          { "lat": -17.331676, "lng": -66.224885 },
+          { "lat": -17.331612, "lng": -66.226061 }
+      ],
+      "color": "#FFDA33"
+  },
+  "sector7": {
+      "name": "Bloque T",
+      "polygon": "Poligono 9",
+      "polygonPath": [
+          { "lat": -17.330417, "lng": -66.225613 },
+          { "lat": -17.330434, "lng": -66.225015 },
+          { "lat": -17.330926, "lng": -66.225031 },
+          { "lat": -17.330868, "lng": -66.225707 }
+      ],
+      "color": "#F39C12"
+  },
+  "sector8": {
       "name": "Comedor",
-      "polygon": "Poligono Comedor"
-    },
-    "sector9": {
-      "name": "Bloque D",
-      "polygon": "Poligono Bloque D"
-    }
+      "polygon": "Poligono 10",
+      "polygonPath": [
+          { "lat": -17.329889, "lng": -66.225671 },
+          { "lat": -17.329913, "lng": -66.225053 },
+          { "lat": -17.330404, "lng": -66.225125 },
+          { "lat": -17.330402, "lng": -66.225667 }
+      ],
+      "color": "#C0392B"
+  },
+  "sector9": {
+      "name": "Biblioteca",
+      "polygon": "Poligono 11",
+      "polygonPath": [
+          { "lat": -17.329577, "lng": -66.226021 },
+          { "lat": -17.329579, "lng": -66.225723 },
+          { "lat": -17.330197, "lng": -66.225743 },
+          { "lat": -17.330173, "lng": -66.226032 }
+      ],
+      "color": "#8E44AD"
+  },
+  "sector10": {
+      "name": "Bloque C y D",
+      "polygon": "Poligono 12",
+      "polygonPath": [
+          { "lat": -17.330103, "lng": -66.226730 },
+          { "lat": -17.330135, "lng": -66.226048 },
+          { "lat": -17.330665, "lng": -66.226043 },
+          { "lat": -17.330639, "lng": -66.226728 }
+      ],
+      "color": "#1ABC9C"
+  },
+  "sector11": {
+      "name": "Planta de Alimentos",
+      "polygon": "Poligono 13",
+      "polygonPath": [
+          { "lat": -17.329526, "lng": -66.226661 },
+          { "lat": -17.329575, "lng": -66.226018 },
+          { "lat": -17.330156, "lng": -66.226021 },
+          { "lat": -17.330111, "lng": -66.226677 }
+      ],
+      "color": "#2C3E50"
+  },
+  "sector12": {
+      "name": "Campo de Fútbol",
+      "polygon": "Poligono 14",
+      "polygonPath": [
+          { "lat": -17.328739, "lng": -66.226697 },
+          { "lat": -17.328735, "lng": -66.226177 },
+          { "lat": -17.329553, "lng": -66.226202 },
+          { "lat": -17.329513, "lng": -66.226692 }
+      ],
+      "color": "#16A085"
+  },
+  "sector13": {
+      "name": "Ingeniería Civil y Laboratorios",
+      "polygon": "Poligono 15",
+      "polygonPath": [
+          { "lat": -17.328737, "lng": -66.226191 },
+          { "lat": -17.328750, "lng": -66.225853 },
+          { "lat": -17.329515, "lng": -66.225889 },
+          { "lat": -17.329511, "lng": -66.226193 }
+      ],
+      "color": "#D35400"
+  },
+  "sector14": {
+      "name": "Taller Metalúrgico",
+      "polygon": "Poligono 16",
+      "polygonPath": [
+          { "lat": -17.328606, "lng": -66.225848 },
+          { "lat": -17.328611, "lng": -66.225550 },
+          { "lat": -17.329558, "lng": -66.225588 },
+          { "lat": -17.329538, "lng": -66.225842 }
+      ],
+      "color": "#7F8C8D"
+  },
+  "sector15": {
+      "name": "Medicina",
+      "polygon": "Poligono 17",
+      "polygonPath": [
+          { "lat": -17.328602, "lng": -66.225544 },
+          { "lat": -17.328636, "lng": -66.225002 },
+          { "lat": -17.329393, "lng": -66.224937 },
+          { "lat": -17.329408, "lng": -66.225544 }
+      ],
+      "color": "#2980B9"
+  },
+  "sector16": {
+      "name": "Laboratorio de Petróleo",
+      "polygon": "Poligono 18",
+      "polygonPath": [
+          { "lat": -17.329412, "lng": -66.225528 },
+          { "lat": -17.329414, "lng": -66.225085 },
+          { "lat": -17.329673, "lng": -66.225073 },
+          { "lat": -17.329692, "lng": -66.225506 }
+      ],
+      "color": "#D35400"
+  },
+  "sector17": {
+      "name": "Gastronomía",
+      "polygon": "Poligono 19",
+      "polygonPath": [
+          { "lat": -17.329684, "lng": -66.225595 },
+          { "lat": -17.329707, "lng": -66.225071 },
+          { "lat": -17.329913, "lng": -66.225053 },
+          { "lat": -17.329727, "lng": -66.225606 }
+      ],
+      "color": "#8E44AD"
+  },
+  "sector18": {
+      "name": "Plaza",
+      "polygon": "Poligono 20",
+      "polygonPath": [
+          { "lat": -17.330308, "lng": -66.225948 },
+          { "lat": -17.330319, "lng": -66.225740 },
+          { "lat": -17.330604, "lng": -66.225740 },
+          { "lat": -17.330627, "lng": -66.225963 }
+      ],
+      "color": "#2ECC71"
   }
+}
