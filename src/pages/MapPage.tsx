@@ -56,6 +56,21 @@ const MapPage: React.FC = () => {
       console.error("Error al cargar las especies:", error);
     }
   };
+  // Función para obtener el color de una especie a partir de su ID
+const getSpeciesColor = (speciesId: string): string => {
+  const species = speciesList.find(s => s.id === speciesId);
+  return species ? species.color : '#3388ff';  // Si no se encuentra, usa un color por defecto
+};
+// Función para crear un icono personalizado con el color de la especie
+const getCustomIcon = (color: string) => {
+  return L.divIcon({
+    html: `<div style="background-color:${color}; width: 24px; height: 24px; border-radius: 50%;"></div>`,
+    className: 'custom-marker-icon',
+    iconSize: [24, 24],  // Tamaño del icono
+    iconAnchor: [12, 24] // Posiciona el icono correctamente
+  });
+};
+
 
   useEffect(() => {
     loadSpecies();
@@ -111,14 +126,21 @@ const MapPage: React.FC = () => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
-          {filteredTrees.map((tree, index) => (
-            <Marker key={index} position={[tree.latitude, tree.longitude]}>
-              <Popup>
-                <strong>{tree.code}</strong> ({tree.species?.commonName})<br />
-                <img src={tree.imageUrl} alt={tree.code} style={{ width: '100px' }} />
-              </Popup>
-            </Marker>
-          ))}
+          {filteredTrees.map((tree, index) => {
+            const speciesColor = getSpeciesColor(tree.speciesId);  // Obtener el color de la especie
+            return (
+              <Marker
+                key={index}
+                position={[tree.latitude, tree.longitude]}
+                icon={getCustomIcon(speciesColor)}  // Usar el icono personalizado con el color de la especie
+              >
+                <Popup>
+                  <strong>{tree.code}</strong> ({tree.species?.commonName})<br />
+                  <img src={tree.imageUrl} alt={tree.code} style={{ width: '100px' }} />
+                </Popup>
+              </Marker>
+            );
+          })}
         </MapContainer>
       </IonContent>
     </IonPage>
