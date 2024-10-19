@@ -1,5 +1,16 @@
 {
   "projects": {
-    "default": "treemap-de6cf"
-  }
+    "default": "treemap-de6cf",
+    "alcaldia": "tree-map-alcaldia"
+  },
+  "targets": {
+    "tree-map-alcaldia": {
+      "hosting": {
+        "tree-map-admin-alcaldia": [
+          "tree-map-admin-alcaldia"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
