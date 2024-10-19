@@ -1,0 +1,84 @@
+{
+    "sectors":{
+        "sector1": {
+            "name": "Parqueo",
+            "polygon": "Poligono Parqueo",
+            "polygonPath": [
+                { "lat": -17.332976, "lng": -66.226799 },
+                { "lat": -17.333062, "lng": -66.226059 },
+                { "lat": -17.333755, "lng": -66.226063 },
+                { "lat": -17.333979, "lng": -66.226792 }
+            ],
+            "color": "#E74C3C"
+        },
+        "sector2": {
+            "name": "Auditorio",
+            "polygon": "Poligono 4",
+            "polygonPath": [
+                { "lat": -17.332452, "lng": -66.226787 },
+                { "lat": -17.332474, "lng": -66.226086 },
+                { "lat": -17.332945, "lng": -66.226059 },
+                { "lat": -17.332954, "lng": -66.226787 }
+            ],
+            "color": "#E74C3C"
+        }
+    },
+    "species": {
+        "species14": {
+            "CO2Absorption": 23,
+            "FoliageArea": 275,
+            "OxygenProduction": 3,
+            "ParticleCapture": 21,
+            "TemperatureReduction": 7,
+            "color": "#257B1F",
+            "commonName": "Branchichito",
+            "description": "Este árbol puede alcanzar hasta 15 metros de altura y es conocido por su tronco retorcido y su copa amplia. Presenta hojas pinnadas de un verde brillante y produce pequeñas flores blancas, seguidas de bayas rojas que son comestibles y tienen un aroma característico. Nativo de América del Sur, especialmente en Perú y Bolivia, el branchichito se adapta bien a climas áridos y suelos pobres. Su madera es utilizada en la construcción y en la fabricación de artesanías. Además, es un árbol importante en la cultura local, utilizado para hacer bebidas y en rituales tradicionales.",
+            "foliage": "Perenne",
+            "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FBranchichito.jpg?alt=media&token=f609a879-52d5-485e-a367-b1b6d9882197",
+            "scientificName": "Schinus molle"
+        },
+        "species15": {
+            "CO2Absorption": 12,
+            "FoliageArea": 212,
+            "OxygenProduction": 2,
+            "ParticleCapture": 13,
+            "TemperatureReduction": 6,
+            "color": "#228B17",
+            "commonName": "Guayaba",
+            "description": "El guayabo es un árbol que puede alcanzar hasta 10 metros de altura, con un tronco liso y hojas brillantes. Durante la floración, produce flores blancas que dan paso a los frutos de guayaba, que son dulces y aromáticos. Nativo de América Tropical, se cultiva ampliamente en muchas partes del mundo por sus frutos. Este árbol prefiere suelos bien drenados y climas cálidos, y es conocido por su rápido crecimiento. Además de su uso como fruta fresca, las guayabas se utilizan en la producción de jugos, mermeladas y postres. En medicina tradicional, se utilizan hojas y frutos por sus propiedades antioxidantes y antiinflamatorias.",
+            "foliage": "Perenne",
+            "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/species%2FGuayaba.webp?alt=media&token=2ed93c74-8c99-4eb2-867f-60c93a18a644",
+            "scientificName": "Psidium guajava"
+        }
+    },
+    "trees": {
+        "-O8hmJvl9_HA0C1CdW1X": {
+            "code": "tipuana02",
+            "createdBy": "whadafaq94@gmail.com",
+            "dateBirth": "2013-08-08",
+            "deleteDate": "",
+            "diameter": 80,
+            "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/trees%2F1728418755028.jpg?alt=media&token=b5d86847-602c-4756-9db7-fcc44270b094",
+            "latitude": -17.3301866,
+            "longitude": -66.2255779,
+            "modifyDate": "",
+            "registerDate": "2024-10-08",
+            "sectorId": "sector2",
+            "speciesId": "species15"
+        },
+        "-O8hmT9jq02Zk9k13K3t": {
+            "code": "FRE01",
+            "createdBy": "shadow24054736@gmail.com",
+            "dateBirth": "1950-12-05",
+            "deleteDate": "",
+            "diameter": 25,
+            "imageUrl": "https://firebasestorage.googleapis.com/v0/b/tree-map-ae44c.appspot.com/o/trees%2F1728418792239.jpg?alt=media&token=6994ddab-9276-405e-a2ee-fd95c2f5c31b",
+            "latitude": -17.3306975,
+            "longitude": -66.2254966,
+            "modifyDate": "",
+            "registerDate": "2024-10-08",
+            "sectorId": "sector1",
+            "speciesId": "species14"
+        }
+    }
+}
