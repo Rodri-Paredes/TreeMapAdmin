@@ -117,8 +117,8 @@ const MapPage: React.FC = () => {
         </IonItem>
 
         <MapContainer 
-          center={[-17.331362, -66.226066]}
-          zoom={16}
+          center={[-17.393838, -66.157061]}
+          zoom={18}
           scrollWheelZoom={true}
           style={{ height: '100vh', width: '100vw' }}
         >
