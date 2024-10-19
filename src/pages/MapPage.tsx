@@ -57,19 +57,19 @@ const MapPage: React.FC = () => {
     }
   };
   // Función para obtener el color de una especie a partir de su ID
-const getSpeciesColor = (speciesId: string): string => {
-  const species = speciesList.find(s => s.id === speciesId);
-  return species ? species.color : '#3388ff';  // Si no se encuentra, usa un color por defecto
-};
-// Función para crear un icono personalizado con el color de la especie
-const getCustomIcon = (color: string) => {
-  return L.divIcon({
-    html: `<div style="background-color:${color}; width: 24px; height: 24px; border-radius: 50%;"></div>`,
-    className: 'custom-marker-icon',
-    iconSize: [24, 24],  // Tamaño del icono
-    iconAnchor: [12, 24] // Posiciona el icono correctamente
-  });
-};
+  const getSpeciesColor = (speciesId: string): string => {
+    const species = speciesList.find(s => s.id === speciesId);
+    return species ? species.color : '#3388ff';  // Si no se encuentra, usa un color por defecto
+  };
+  // Función para crear un icono personalizado con el color de la especie
+  const getCustomIcon = (color: string) => {
+    return L.divIcon({
+      html: `<div style="background-color:${color}; width: 24px; height: 24px; border-radius: 50%;"></div>`,
+      className: 'custom-marker-icon',
+      iconSize: [24, 24],  // Tamaño del icono
+      iconAnchor: [12, 24] // Posiciona el icono correctamente
+    });
+  };
 
 
   useEffect(() => {
