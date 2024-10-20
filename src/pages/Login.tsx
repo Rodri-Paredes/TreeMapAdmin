@@ -54,7 +54,7 @@ const LoginTree: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Login Árboles</IonTitle>
+          <IonTitle>Login Alcaldia</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
