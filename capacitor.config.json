@@ -1,0 +1,6 @@
+{
+  "appId": "com.miapp.ionic",
+  "appName": "TreeMapAdmin",
+  "webDir": "build",
+  "bundledWebRuntime": false
+}
