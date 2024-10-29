@@ -37,6 +37,7 @@ import TreeList from './pages/TreeList';
 import MapPage from './pages/MapPage';
 import TreeRegister from './pages/TreeRegister';
 import Login from './pages/Login';
+import Statistics from './pages/Statistics';
 
 
 setupIonicReact();
@@ -55,6 +56,7 @@ const App: React.FC = () => (
         <Route exact path="/tree-register">
           <TreeRegister />
         </Route>
+        <Route path="/statistics" component={Statistics} exact />
         <Route exact path="/">
           <Redirect to="/Login" />
         </Route>

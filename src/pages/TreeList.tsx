@@ -27,7 +27,9 @@ const TreeList: React.FC = () => {
     const handleCreateNew = () => {
         history.push('/tree-register');
     };
-
+    const handleGoToStatistics = () => {
+        history.push('/statistics');
+    };
     const loadSpecies = async () => {
         try {
             const database = getDatabase();
@@ -84,6 +86,11 @@ const TreeList: React.FC = () => {
                     </IonButtons>
                     <IonTitle>Lista de Árboles</IonTitle>
                     <IonButtons slot="end">
+                        <IonButton onClick={handleGoToStatistics} fill="clear">
+                            {filteredTrees.length}
+                        </IonButton>
+                    </IonButtons>
+                    <IonButtons slot="end">
                         <IonButton onClick={handleCreateNew} fill="clear" size="small">
                             <IonIcon slot="icon-only" icon={addCircleOutline} />
                         </IonButton>
@@ -111,10 +118,9 @@ const TreeList: React.FC = () => {
                     {filteredTrees.map((tree) => (
                         <IonItem key={tree.id} button onClick={() => history.push({ pathname: '/tree-register', state: { treeData: tree } })}>
                             <IonLabel>
-                                <h2>{tree.code}</h2>
-                                <p>{tree.species?.commonName}</p>
+                                <h2>{tree.species?.commonName}</h2>
                                 <p>{tree.sector?.name}</p>
-                                <p>Coordenadas: {tree.latitude}, {tree.longitude}</p>
+                                <p>Calle: {tree.address}</p>
                             </IonLabel>
                             <div className="tree-img-wrapper">
                                 <IonImg className="tree-img" src={tree.imageUrl} alt={tree.code} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
