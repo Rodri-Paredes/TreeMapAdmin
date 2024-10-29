@@ -27,6 +27,7 @@ import { getAuth } from 'firebase/auth';
 import imageCompression from 'browser-image-compression';
 
 
+
 interface TreeRegisterProps {
     treeData?: Tree;
 }
@@ -45,11 +46,11 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
     const [oldPhoto, setOldPhoto] = useState('');
     const [alertMessage, setAlertMessage] = useState('');
     const [showAlert, setShowAlert] = useState(false);
-    const [dateBirth, setDateBirth] = useState<string>(new Date().toISOString().split('T')[0]); // Valor por defecto
     const [registerDate, setRegisterDate] = useState<string>(new Date().toISOString().split('T')[0]); // Valor por defecto
-
     const [speciesList, setSpeciesList] = useState<any[]>([]);
     const [sectorsList, setSectorsList] = useState<any[]>([]);
+    const [isCodeGenerated, setIsCodeGenerated] = useState(false);
+    const [address, setAddress] = useState('');
     
     // Nuevo estado para controlar el envío del formulario
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,9 +66,9 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
             setSectorId(treeData.sectorId);
             setLatitude(treeData.latitude.toString());
             setLongitude(treeData.longitude.toString());
-            setDateBirth(treeData.dateBirth);
             setRegisterDate(treeData.registerDate);
             setOldPhoto(treeData.imageUrl);
+            setAddress(treeData.address);
         }
     }, []);
 
@@ -231,12 +232,14 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
         setLatitude('');
         setLongitude('');
         setPhoto('');
-        setDateBirth(new Date().toISOString().split('T')[0]); // Resetear a la fecha actual
-        setRegisterDate(new Date().toISOString().split('T')[0]); // Resetear a la fecha actual
+        setAddress('');
+/*         setDateBirth(new Date().toISOString().split('T')[0]); // Resetear a la fecha actual
+        setRegisterDate(new Date().toISOString().split('T')[0]); // Resetear a la fecha actual */
     };
 
     const handleSave = async () => {
-        if (!code || !speciesId || !dateBirth || !registerDate || !diameter || !latitude || !longitude || !sectorId || (!photo && !oldPhoto)) {
+        const registerDate = new Date().toISOString();
+        if (  !speciesId || !registerDate || !diameter || !latitude || !longitude || !sectorId || (!photo && !oldPhoto)) {
             setAlertMessage('Error: por favor, completa todos los campos requeridos.');
             setShowAlert(true);
             return; 
@@ -255,7 +258,6 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
         const newTree  = {
             speciesId,
             code,
-            dateBirth,
             registerDate,
             diameter,
             deleteDate: '',
@@ -264,7 +266,8 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
             modifyDate: '',
             sectorId,
             imageUrl: uploadedPhotoUrl,
-            createdBy: user?.email
+            createdBy: user?.email,
+            address
         } as Tree;
 
         try {
@@ -293,33 +296,41 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
         setShowAlert(true);
         resetFields();
     };
-
-    const generateCode = () => {
-        const selectedSpecies = speciesList.find(species => species.id === speciesId);
-        if (selectedSpecies) {
-            // Generar código usando las 3 primeras letras del commonName y convertirlas a mayúsculas
-            const letters = selectedSpecies.commonName.substring(0, 3).toUpperCase();
+    const handleReverseGeolocation = async () => {
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`);
+            const data = await response.json();
             
-            // Función para generar 4 caracteres aleatorios (letras y números)
-            const generateRandomChars = (length: number): string => {
-                const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'; // Letras mayúsculas y números
-                let result = '';
-                for (let i = 0; i < length; i++) {
-                    const randomIndex = Math.floor(Math.random() * characters.length);
-                    result += characters.charAt(randomIndex); // Agregar carácter aleatorio
-                }
-                return result;
-            };
-    
-            // Generar 4 caracteres aleatorios
-            const randomChars = generateRandomChars(4);
-    
-            // Combinar las letras y los caracteres aleatorios
-            const code = `${letters}-${randomChars}`;
-    
-            setCode(code); // Asignar el código generado
+            if (data && data.address && data.address.road) {
+                setAddress(data.address.road); // Almacena solo el nombre de la calle
+            } else {
+                setAddress('Calle no encontrada');
+            }
+        } catch (error) {
+            console.error('Error al obtener la dirección:', error);
         }
     };
+    
+
+        
+        const generateCode = () => {
+            const selectedSpecies = speciesList.find(species => species.id === speciesId);
+            if (selectedSpecies) {
+                // Generar código usando las 3 primeras letras del commonName y convertirlas a mayúsculas
+                const letters = selectedSpecies.commonName.substring(0, 3).toUpperCase();
+                
+                // Suponiendo que tienes latitude y longitude disponibles
+                const lat = round(parseFloat(latitude), 4); // Convert to float
+                const lng = round(parseFloat(longitude), 4); // Convert to float
+                // Generar el código basado en las coordenadas
+                const code = `${letters}-${lat.toString().replace('.', '')}-${lng.toString().replace('.', '')}`;
+                
+                setCode(code); // Asignar el código generado
+            }
+        };
+        const round = (value: number, decimals: number): number => {
+            return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
+        };
     
 
     return (
@@ -376,15 +387,7 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
                         required 
                     />
                 </IonItem>
-                <IonItem>
-                    <IonLabel position="stacked">Código</IonLabel>
-                    <IonInput 
-                        value={code} 
-                        onIonChange={(e) => setCode(e.detail.value!)} 
-                        required 
-                    />
-                    <IonButton onClick={generateCode}>Generar Código</IonButton>
-                </IonItem>
+
                 <IonItem>
                     <IonLabel position="stacked">Latitud</IonLabel>
                     <IonInput 
@@ -402,8 +405,27 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
                 <IonButton expand="full" onClick={handleGetLocation} style={{ margin: '10px 0' }}>
                     Obtener Ubicación Actual
                 </IonButton>
-
                 <IonItem>
+                    <IonLabel position="stacked">Código</IonLabel>
+                    <IonInput
+                        value={code}
+                        onIonChange={(e) => !isCodeGenerated && setCode(e.detail.value!)}
+                        required
+                        disabled={isCodeGenerated} // Disable input if code is generated
+                        readonly
+                    />
+                    <IonButton onClick={generateCode} disabled={isCodeGenerated}>Generar Código</IonButton>
+                </IonItem>
+                <IonItem>
+                    <IonLabel position="stacked">Direccion</IonLabel>
+                    <IonInput
+                        value={address}
+                        readonly
+                    />
+                    <IonButton onClick={handleReverseGeolocation}>Obtener Direccion</IonButton>
+                </IonItem>
+
+               {/*  <IonItem>
                     <IonLabel position="stacked">Fecha de Nacimiento</IonLabel>
                     <IonDatetime 
                         presentation="date" 
@@ -411,17 +433,14 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
                         onIonChange={(e) => setDateBirth(e.detail.value!)} 
                         preferWheel={true}
                     />
-                </IonItem>
+                </IonItem> */}
 
-                <IonItem>
-                    <IonLabel position="stacked">Fecha de Registro</IonLabel>
-                    <IonDatetime 
-                        presentation="date" 
-                        value={registerDate} 
-                        onIonChange={(e) => setRegisterDate(e.detail.value!)} 
-                        preferWheel={true}
-                    />
-                </IonItem>
+                {treeData && (
+                    <IonItem>
+                        <IonLabel position="stacked">Fecha de Registro</IonLabel>
+                        <IonLabel>{new Date(registerDate).toLocaleDateString()}</IonLabel>
+                    </IonItem>
+                )}
 
                 <IonItem>
                     <IonLabel>Foto</IonLabel>
