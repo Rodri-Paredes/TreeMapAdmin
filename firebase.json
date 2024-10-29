@@ -17,7 +17,7 @@
     },
     {
       "target": "tree-map-admin-alcaldia",
-      "public": "dist",
+      "public": "build",
       "ignore": [
         "firebase.json",
         "**/.*",
