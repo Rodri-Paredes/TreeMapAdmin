@@ -34,9 +34,9 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
     const treeData = location.state?.treeData;
     const history = useHistory();
     const [code, setCode] = useState('');
-    const [speciesId, setSpeciesId] = useState(treeData?.speciesId || '');  // Initialize with treeData speciesId if available
+    const [speciesId, setSpeciesId] = useState(treeData?.speciesId || '');  
     const [diameter, setDiameter] = useState<number>(0); 
-    const [sectorId, setSectorId] = useState(treeData?.sectorId || '');  // Initialize with treeData sectorId if available
+    const [sectorId, setSectorId] = useState(treeData?.sectorId || '');  
     const [latitude, setLatitude] = useState('');
     const [longitude, setLongitude] = useState('');
     const [photo, setPhoto] = useState('');
@@ -67,13 +67,13 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
 
     useEffect(() => {
         if (speciesList.length > 0 && !treeData) {
-            setSpeciesId(speciesList[0].id); // Default species if not editing
+            setSpeciesId(speciesList[0].id);
         }
     }, [speciesList]);
     
     useEffect(() => {
         if (sectorsList.length > 0 && !treeData) {
-            setSectorId(sectorsList[0].id); // Default sector if not editing
+            setSectorId(sectorsList[0].id);
         }
     }, [sectorsList]);
 
@@ -279,6 +279,38 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
         }
     };
 
+    const handleReverseGeolocation = async () => {
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`);
+            const data = await response.json();
+            
+            if (data && data.address && data.address.road) {
+                setAddress(data.address.road); 
+            } else {
+                setAddress('Calle no encontrada');
+            }
+        } catch (error) {
+            console.error('Error al obtener la dirección:', error);
+        }
+    };
+    
+
+    const generateCode = () => {
+        const selectedSpecies = speciesList.find(species => species.id === speciesId);
+        if (selectedSpecies) {
+            const letters = selectedSpecies.commonName.substring(0, 3).toUpperCase();
+            const lat = round(parseFloat(latitude), 4);
+            const lng = round(parseFloat(longitude), 4);
+            const generatedCode = `${letters}-${lat.toString().replace('.', '')}-${lng.toString().replace('.', '')}`;
+            
+            setCode(generatedCode); 
+        }
+    };
+    
+    const round = (value: number, decimals: number): number => {
+        return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
+    };
+
     return (
         <IonPage>
             <IonHeader>
@@ -354,11 +386,9 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
                     <IonLabel position="stacked">Código</IonLabel>
                     <IonInput
                         value={code}
-                        onIonChange={(e) => !isCodeGenerated && setCode(e.detail.value!)}
-                        required
-                        disabled={isCodeGenerated}
                         readonly
                     />
+                    <IonButton onClick={generateCode} disabled={isCodeGenerated}>Generar Código</IonButton>
                 </IonItem>
                 <IonItem>
                     <IonLabel position="stacked">Dirección</IonLabel>
@@ -366,6 +396,7 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
                         value={address}
                         readonly
                     />
+                    <IonButton onClick={handleReverseGeolocation}>Obtener Dirección</IonButton>
                 </IonItem>
 
                 {treeData && (
