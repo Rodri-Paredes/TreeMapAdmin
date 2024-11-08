@@ -65,7 +65,7 @@ const useFetchTrees = (setTrees: React.Dispatch<React.SetStateAction<Tree[]>>, c
                                     } as Tree; // Convert to Tree type
                                 });
             
-                                console.log('Datos de árboles con especies y sectores:', displayItem);
+
                                 setTrees(displayItem); // Update state with trees including species and sector info
                             } else {
                                 console.log('No se encontraron árboles.');

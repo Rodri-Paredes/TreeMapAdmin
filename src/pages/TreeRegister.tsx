@@ -12,7 +12,6 @@ import {
   IonLabel, 
   IonInput, 
   IonAlert,
-  IonDatetime,
   IonSelect,
   IonSelectOption,
   IonLoading
@@ -26,8 +25,6 @@ import { getStorage, ref as storageRef, uploadString, getDownloadURL } from 'fir
 import { getAuth } from 'firebase/auth';
 import imageCompression from 'browser-image-compression';
 
-
-
 interface TreeRegisterProps {
     treeData?: Tree;
 }
@@ -37,22 +34,20 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
     const treeData = location.state?.treeData;
     const history = useHistory();
     const [code, setCode] = useState('');
-    const [speciesId, setSpeciesId] = useState('');
+    const [speciesId, setSpeciesId] = useState(treeData?.speciesId || '');  // Initialize with treeData speciesId if available
     const [diameter, setDiameter] = useState<number>(0); 
-    const [sectorId, setSectorId] = useState(''); 
+    const [sectorId, setSectorId] = useState(treeData?.sectorId || '');  // Initialize with treeData sectorId if available
     const [latitude, setLatitude] = useState('');
     const [longitude, setLongitude] = useState('');
     const [photo, setPhoto] = useState('');
     const [oldPhoto, setOldPhoto] = useState('');
     const [alertMessage, setAlertMessage] = useState('');
     const [showAlert, setShowAlert] = useState(false);
-    const [registerDate, setRegisterDate] = useState<string>(new Date().toISOString().split('T')[0]); // Valor por defecto
+    const [registerDate, setRegisterDate] = useState<string>(new Date().toISOString().split('T')[0]);
     const [speciesList, setSpeciesList] = useState<any[]>([]);
     const [sectorsList, setSectorsList] = useState<any[]>([]);
     const [isCodeGenerated, setIsCodeGenerated] = useState(false);
     const [address, setAddress] = useState('');
-    
-    // Nuevo estado para controlar el envío del formulario
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
@@ -61,9 +56,7 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
 
         if (treeData) {
             setCode(treeData.code);
-            setSpeciesId(treeData.speciesId);
             setDiameter(treeData.diameter);
-            setSectorId(treeData.sectorId);
             setLatitude(treeData.latitude.toString());
             setLongitude(treeData.longitude.toString());
             setRegisterDate(treeData.registerDate);
@@ -73,16 +66,14 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
     }, []);
 
     useEffect(() => {
-        // Establecer el valor por defecto para speciesId
-        if (speciesList.length > 0) {
-            setSpeciesId(speciesList[0].id); // Seleccionar la primera especie como valor por defecto
+        if (speciesList.length > 0 && !treeData) {
+            setSpeciesId(speciesList[0].id); // Default species if not editing
         }
     }, [speciesList]);
     
     useEffect(() => {
-        // Establecer el valor por defecto para sectorId
-        if (sectorsList.length > 0) {
-            setSectorId(sectorsList[0].id); // Seleccionar el primer sector como valor por defecto
+        if (sectorsList.length > 0 && !treeData) {
+            setSectorId(sectorsList[0].id); // Default sector if not editing
         }
     }, [sectorsList]);
 
@@ -162,18 +153,15 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
 
     const compressImage = async (base64String: string) => {
         try {
-            // Añadir el prefijo MIME a la cadena Base64
             const imagePrefix = "data:image/jpeg;base64,";
             const fullBase64String = imagePrefix + base64String;
 
-            // Realiza el fetch con el string Base64 completo
             const response = await fetch(fullBase64String);
             if (!response.ok) {
                 throw new Error('Error al realizar fetch');
             }
             const blob = await response.blob();
 
-            // Crear un objeto File a partir del blob
             const file = new File([blob], 'image.jpg', { type: blob.type });
     
             const options = {
@@ -182,21 +170,19 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
                 useWebWorker: true,
             };
     
-            // Comprimir la imagen
             const compressedFile = await imageCompression(file, options);
     
-            // Convertir el archivo comprimido de nuevo a base64
             const compressedBase64 = await new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onloadend = () => {
                     const compressedBase64 = reader.result as string;
-                    resolve(compressedBase64.split(',')[1]);//No devolver el prefix o falla firebase
+                    resolve(compressedBase64.split(',')[1]);
                 };
                 reader.onerror = () => reject(new Error('Error al leer el archivo comprimido'));
                 reader.readAsDataURL(compressedFile);
             });
     
-            return compressedBase64; // Retornar la imagen comprimida en base64
+            return compressedBase64;
         } catch (error) {
             console.error('Error al comprimir la imagen:', error);
             throw new Error('Error al comprimir la imagen');
@@ -233,105 +219,65 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
         setLongitude('');
         setPhoto('');
         setAddress('');
-/*         setDateBirth(new Date().toISOString().split('T')[0]); // Resetear a la fecha actual
-        setRegisterDate(new Date().toISOString().split('T')[0]); // Resetear a la fecha actual */
     };
 
     const handleSave = async () => {
         const registerDate = new Date().toISOString();
-        if (  !speciesId || !registerDate || !diameter || !latitude || !longitude || !sectorId || (!photo && !oldPhoto)) {
+        if (!speciesId || !registerDate || !diameter || !latitude || !longitude || !sectorId || (!photo && !oldPhoto)) {
             setAlertMessage('Error: por favor, completa todos los campos requeridos.');
             setShowAlert(true);
             return; 
         }
 
-        // Deshabilitar el botón mientras se está enviando el formulario
         setIsSubmitting(true);
         const auth = getAuth();
         const user = auth.currentUser;
         let uploadedPhotoUrl;
-        if(!oldPhoto){
-            uploadedPhotoUrl = await uploadPhotoToFirebase(photo);
-        }else{
-            uploadedPhotoUrl = oldPhoto;
-        }
-        const newTree  = {
-            speciesId,
-            code,
-            registerDate,
-            diameter,
-            deleteDate: '',
-            latitude: parseFloat(latitude),
-            longitude: parseFloat(longitude),
-            modifyDate: '',
-            sectorId,
-            imageUrl: uploadedPhotoUrl,
-            createdBy: user?.email,
-            address
-        } as Tree;
-
+        
         try {
-            if(treeData){
-                const database = getDatabase();
+            if (!oldPhoto) {
+                uploadedPhotoUrl = await uploadPhotoToFirebase(photo);
+            } else {
+                uploadedPhotoUrl = oldPhoto;
+            }
+            const newTree = {
+                speciesId,
+                code,
+                registerDate,
+                diameter,
+                deleteDate: '',
+                latitude: parseFloat(latitude),
+                longitude: parseFloat(longitude),
+                modifyDate: '',
+                sectorId,
+                imageUrl: uploadedPhotoUrl,
+                createdBy: user?.email,
+                address
+            } as Tree;
+
+            const database = getDatabase();
+
+            if (treeData) {
                 const treeRef = ref(database, `trees/${treeData.id}`);
                 newTree.modifyDate = new Date().toISOString();
                 await update(treeRef, newTree);
-                handleBack();
-            }else{
-                const database = getDatabase();
+            } else {
                 const treesRef = ref(database, 'trees');
                 await push(treesRef, newTree);
             }
+
+            setAlertMessage(`Árbol registrado con éxito por ${user?.displayName || user?.email}!`);
+            resetFields();
+            handleBack();
+
         } catch (error) {
             console.error("Error al guardar el árbol:", error);
-            setAlertMessage('Erro al registrar el árbol')
+            setAlertMessage('Error al registrar el árbol');
             setShowAlert(true);
         } finally {
-            // Habilitar el botón nuevamente
             setIsSubmitting(false);
         }
-
-        console.log(newTree);
-        setAlertMessage(`Arbol registrado con éxito por ${user?.displayName || user?.email}!`);
-        setShowAlert(true);
-        resetFields();
     };
-    const handleReverseGeolocation = async () => {
-        try {
-            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`);
-            const data = await response.json();
-            
-            if (data && data.address && data.address.road) {
-                setAddress(data.address.road); // Almacena solo el nombre de la calle
-            } else {
-                setAddress('Calle no encontrada');
-            }
-        } catch (error) {
-            console.error('Error al obtener la dirección:', error);
-        }
-    };
-    
-
-        
-        const generateCode = () => {
-            const selectedSpecies = speciesList.find(species => species.id === speciesId);
-            if (selectedSpecies) {
-                // Generar código usando las 3 primeras letras del commonName y convertirlas a mayúsculas
-                const letters = selectedSpecies.commonName.substring(0, 3).toUpperCase();
-                
-                // Suponiendo que tienes latitude y longitude disponibles
-                const lat = round(parseFloat(latitude), 4); // Convert to float
-                const lng = round(parseFloat(longitude), 4); // Convert to float
-                // Generar el código basado en las coordenadas
-                const code = `${letters}-${lat.toString().replace('.', '')}-${lng.toString().replace('.', '')}`;
-                
-                setCode(code); // Asignar el código generado
-            }
-        };
-        const round = (value: number, decimals: number): number => {
-            return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
-        };
-    
 
     return (
         <IonPage>
@@ -342,9 +288,9 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
                             <IonIcon slot="icon-only" icon={arrowBack} />
                         </IonButton>
                     </IonButtons>
-                    <IonTitle>{(!treeData)?'Registrar Árbol':'Actualizar Árbol'}</IonTitle>
+                    <IonTitle>{(!treeData) ? 'Registrar Árbol' : 'Actualizar Árbol'}</IonTitle>
                     <IonButtons slot="end">
-                        <IonButton onClick={handleSave} fill="clear" disabled={isSubmitting}> {/* Deshabilitar el botón si está enviando */}
+                        <IonButton onClick={handleSave} fill="clear" disabled={isSubmitting}>
                             <IonIcon slot="icon-only" icon={checkmark} />
                         </IonButton>
                     </IonButtons>
@@ -387,7 +333,6 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
                         required 
                     />
                 </IonItem>
-
                 <IonItem>
                     <IonLabel position="stacked">Latitud</IonLabel>
                     <IonInput 
@@ -411,29 +356,17 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
                         value={code}
                         onIonChange={(e) => !isCodeGenerated && setCode(e.detail.value!)}
                         required
-                        disabled={isCodeGenerated} // Disable input if code is generated
+                        disabled={isCodeGenerated}
                         readonly
                     />
-                    <IonButton onClick={generateCode} disabled={isCodeGenerated}>Generar Código</IonButton>
                 </IonItem>
                 <IonItem>
-                    <IonLabel position="stacked">Direccion</IonLabel>
+                    <IonLabel position="stacked">Dirección</IonLabel>
                     <IonInput
                         value={address}
                         readonly
                     />
-                    <IonButton onClick={handleReverseGeolocation}>Obtener Direccion</IonButton>
                 </IonItem>
-
-               {/*  <IonItem>
-                    <IonLabel position="stacked">Fecha de Nacimiento</IonLabel>
-                    <IonDatetime 
-                        presentation="date" 
-                        value={dateBirth} 
-                        onIonChange={(e) => setDateBirth(e.detail.value!)} 
-                        preferWheel={true}
-                    />
-                </IonItem> */}
 
                 {treeData && (
                     <IonItem>
@@ -449,17 +382,14 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
                     </IonButton>
                 </IonItem>
                 {photo && (
-                   <img src={`data:image/jpeg;base64,${photo}`} alt="Arbol" style={{ width: '100%', marginTop: '10px' }} />
+                   <img src={`data:image/jpeg;base64,${photo}`} alt="Árbol" style={{ width: '100%', marginTop: '10px' }} />
                 )}
                 {oldPhoto && (
-                   <img src={`${oldPhoto}`} alt="Arbol" style={{ width: '100%', marginTop: '10px' }} />
+                   <img src={`${oldPhoto}`} alt="Árbol" style={{ width: '100%', marginTop: '10px' }} />
                 )}
             </IonContent>
 
-            <IonLoading
-                    isOpen={isSubmitting}
-                    message={'Guardando...'}
-            />
+            <IonLoading isOpen={isSubmitting} message={'Guardando...'} />
             <IonAlert
                 isOpen={showAlert}
                 onDidDismiss={() => setShowAlert(false)}
