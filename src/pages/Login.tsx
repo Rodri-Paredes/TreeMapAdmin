@@ -37,32 +37,10 @@ const LoginTree: React.FC = () => {
     return emailPattern.test(value);
   };
 
-  // Validación de nombre de usuario
-  const isUsernameValid = (value: string) => {
-    const usernamePattern = /^[a-zA-Z0-9._]+$/; // solo letras, números, puntos y guiones bajos
-    return usernamePattern.test(value);
-  };
-
-  // Verificación de usuario o email
-  const isEmailOrUsernameValid = (value: string) => {
-    if (value.includes('@')) {
-      return isEmailValid(value);
-    } else {
-      return isUsernameValid(value);
-    }
-  };
-
-  // Validación de la contraseña
-  const isPasswordValid = (value: string) => {
-    const minLength = 6;
-    const maxLength = 20;
-    const passwordPattern = /^[a-zA-Z0-9]+$/; // solo letras y números
-    return value.length >= minLength && value.length <= maxLength && passwordPattern.test(value);
-  };
-
   // Actualiza el estado de habilitación del botón
   useEffect(() => {
-    setIsButtonDisabled(!isEmailOrUsernameValid(emailOrUsername) || !isPasswordValid(password));
+    // Deshabilita el botón si falta `@` en el campo de email/username o la contraseña es inválida
+    setIsButtonDisabled(!emailOrUsername.includes('@') || password.length < 6 || password.length > 20);
   }, [emailOrUsername, password]);
 
   // Manejar el inicio de sesión
@@ -71,20 +49,8 @@ const LoginTree: React.FC = () => {
     setError('');
     setLoading(true);
 
-    // Validar campos antes de intentar iniciar sesión
-    if (!isEmailOrUsernameValid(emailOrUsername)) {
-      if (emailOrUsername.includes('@')) {
-        setError('El email no es válido. Verifique el formato.');
-      } else {
-        setError('El nombre de usuario es inválido. No debe contener caracteres especiales.');
-      }
-      setShowAlert(true);
-      setLoading(false);
-      return;
-    }
-
-    if (!isPasswordValid(password)) {
-      setError('Contraseña inválida. Debe tener entre 6 y 20 caracteres sin espacios ni símbolos especiales.');
+    if (!emailOrUsername.includes('@')) {
+      setError('El email o nombre de usuario debe contener un @.');
       setShowAlert(true);
       setLoading(false);
       return;
@@ -96,7 +62,6 @@ const LoginTree: React.FC = () => {
       // Redirigir a la lista de árboles después del inicio de sesión
       history.push('/tree-list');
     } catch (err: any) {
-      // Mostrar mensaje de error si falla el inicio de sesión
       setError('Usuario o contraseña inválidos');
       setShowAlert(true);
     } finally {
@@ -108,7 +73,7 @@ const LoginTree: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Login Alcaldía</IonTitle>
+          <IonTitle>Login Univalle</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
