@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonImg, IonFab, IonFabButton, IonIcon, IonButton, IonButtons, IonAlert, IonSelect, IonSelectOption } from '@ionic/react';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonLabel, IonImg, IonButton, IonButtons, IonAlert, IonSelect, IonSelectOption, IonIcon } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
 import { mapOutline, addCircleOutline, logOutOutline, trash } from 'ionicons/icons';
 import useFetchTrees from '../hooks/useFetchTrees';
 import config from './../firebaseConfig';
 import { getDatabase, ref, remove, get } from 'firebase/database';
 import useLogout from '../hooks/useLogout';
+import { getAuth } from 'firebase/auth';
 
 const TreeList: React.FC = () => {
     const history = useHistory();
@@ -14,8 +15,8 @@ const TreeList: React.FC = () => {
     const [showErrorAlert, setShowErrorAlert] = useState(false);
     const [treeToDelete, setTreeToDelete] = useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string>('');
-    const [selectedSpecies, setSelectedSpecies] = useState<string>(''); // Especie seleccionada
-    const [speciesList, setSpeciesList] = useState<any[]>([]); // Lista de especies
+    const [selectedSpecies, setSelectedSpecies] = useState<string>('');
+    const [speciesList, setSpeciesList] = useState<any[]>([]);
     const logout = useLogout();
 
     useFetchTrees(setTrees, config);
@@ -27,13 +28,15 @@ const TreeList: React.FC = () => {
     const handleCreateNew = () => {
         history.push('/tree-register');
     };
+
     const handleGoToStatistics = () => {
         history.push('/statistics');
     };
+
     const loadSpecies = async () => {
         try {
             const database = getDatabase();
-            const speciesRef = ref(database, 'species'); // Ajusta esta ruta según tu base de datos
+            const speciesRef = ref(database, 'species');
             const snapshot = await get(speciesRef);
             
             if (snapshot.exists()) {
@@ -51,6 +54,11 @@ const TreeList: React.FC = () => {
 
     useEffect(() => {
         loadSpecies();
+        const auth = getAuth(config);
+        const user = auth.currentUser;
+        if(!user){
+            logout();
+        }
     }, []);
 
     const handleDeleteTree = async (treeId: string) => {
@@ -89,10 +97,11 @@ const TreeList: React.FC = () => {
                         <IonButton onClick={handleGoToStatistics} fill="clear">
                             {filteredTrees.length}
                         </IonButton>
-                    </IonButtons>
-                    <IonButtons slot="end">
                         <IonButton onClick={handleCreateNew} fill="clear" size="small">
                             <IonIcon slot="icon-only" icon={addCircleOutline} />
+                        </IonButton>
+                        <IonButton onClick={handleViewMap} fill="clear" size="small">
+                            <IonIcon slot="icon-only" icon={mapOutline} />
                         </IonButton>
                     </IonButtons>
                 </IonToolbar>
@@ -125,18 +134,13 @@ const TreeList: React.FC = () => {
                             <div className="tree-img-wrapper">
                                 <IonImg className="tree-img" src={tree.imageUrl} alt={tree.code} style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
                             </div>
+                            {/* Botón de eliminación al lado de cada árbol */}
                             <IonButton fill="clear" color="danger" onClick={(e) => {e.stopPropagation(); confirmDeleteTree(tree.id);}}>
                                 <IonIcon icon={trash} />
                             </IonButton>
                         </IonItem>
                     ))}
                 </IonList>
-
-                <IonFab vertical="bottom" horizontal="end" slot="fixed">
-                    <IonFabButton onClick={handleViewMap}>
-                        <IonIcon icon={mapOutline} />
-                    </IonFabButton>
-                </IonFab>
 
                 <IonAlert
                     isOpen={showAlert}

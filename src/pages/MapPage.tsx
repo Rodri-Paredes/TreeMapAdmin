@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonButton, IonButtons, IonIcon, IonSelect, IonSelectOption, IonItem, IonLabel } from '@ionic/react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useHistory } from 'react-router';
@@ -9,8 +9,8 @@ import useFetchTrees from '../hooks/useFetchTrees';
 import config from './../firebaseConfig';
 import useLogout from '../hooks/useLogout';
 import { getDatabase, ref, get } from 'firebase/database';
+import { getAuth } from 'firebase/auth';
 
-// Configuración de iconos de Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -22,26 +22,24 @@ const MapPage: React.FC = () => {
   const history = useHistory();
   const logout = useLogout();
   const [trees, setTrees] = useState<Tree[]>([]);
-  const [selectedSpecies, setSelectedSpecies] = useState<string>(''); // Especie seleccionada
-  const [speciesList, setSpeciesList] = useState<any[]>([]); // Lista de especies
+  const [selectedSpecies, setSelectedSpecies] = useState<string>('');
+  const [speciesList, setSpeciesList] = useState<any[]>([]);
 
   useFetchTrees(setTrees, config);
 
   useEffect(() => {
-    // Simular un cambio de tamaño de pantalla para manejar el problema con el mapa
     const resizeEvent = new Event('resize');
     window.dispatchEvent(resizeEvent);
   }, []);
 
   const handleViewList = () => {
-    history.push('/tree-list');  // Cambia la ruta a "tree-list"
+    history.push('/tree-list');
   };
 
-  // Función para cargar las especies desde Firebase
   const loadSpecies = async () => {
     try {
       const database = getDatabase();
-      const speciesRef = ref(database, 'species'); // Ajusta esta ruta según tu base de datos
+      const speciesRef = ref(database, 'species');
       const snapshot = await get(speciesRef);
 
       if (snapshot.exists()) {
@@ -56,12 +54,12 @@ const MapPage: React.FC = () => {
       console.error("Error al cargar las especies:", error);
     }
   };
-  // Función para obtener el color de una especie a partir de su ID
+
   const getSpeciesColor = (speciesId: string): string => {
     const species = speciesList.find(s => s.id === speciesId);
-    return species ? species.color : '#3388ff';  // Si no se encuentra, usa un color por defecto
+    return species ? species.color : '#3388ff'; 
   };
-  // Función para crear un icono personalizado con el color de la especie
+
   const getCustomIcon = (color: string) => {
     return L.divIcon({
       html: `<div style="background-color:${color}; width: 24px; height: 24px; border-radius: 50%;"></div>`,
@@ -71,15 +69,24 @@ const MapPage: React.FC = () => {
     });
   };
 
-
   useEffect(() => {
     loadSpecies();
+    const auth = getAuth(config);
+    const user = auth.currentUser;
+    if(!user){
+        logout();
+    }
   }, []);
 
-  // Filtrar árboles por especie
   const filteredTrees = selectedSpecies 
     ? trees.filter(tree => tree.speciesId === selectedSpecies) 
     : trees;
+
+  // Limites de Cochabamba
+  const cochabambaBounds = [
+    [-17.441, -66.325], // Suroeste
+    [-17.285, -66.070]  // Noreste
+  ];
 
   return (
     <IonPage>
@@ -121,18 +128,22 @@ const MapPage: React.FC = () => {
           zoom={18}
           scrollWheelZoom={true}
           style={{ height: '100vh', width: '100vw' }}
+          maxBounds={cochabambaBounds} // Limitar el área visible al área de Cochabamba
+          maxBoundsViscosity={1.0} // Restringe completamente el área
+          minZoom={13} // Ajusta el zoom mínimo para que no se aleje demasiado
+          maxZoom={22} // Ajusta el zoom máximo para un mejor enfoque en la región
         >
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
           {filteredTrees.map((tree, index) => {
-            const speciesColor = getSpeciesColor(tree.speciesId);  // Obtener el color de la especie
+            const speciesColor = getSpeciesColor(tree.speciesId);
             return (
               <Marker
                 key={index}
                 position={[tree.latitude, tree.longitude]}
-                icon={getCustomIcon(speciesColor)}  // Usar el icono personalizado con el color de la especie
+                icon={getCustomIcon(speciesColor)}
               >
                 <Popup>
                   <strong>{tree.code}</strong> ({tree.species?.commonName})<br />

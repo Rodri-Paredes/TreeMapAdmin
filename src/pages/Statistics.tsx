@@ -1,26 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonList, IonItem, IonLabel, IonPage, IonHeader, IonButtons, IonToolbar, IonTitle, IonIcon, IonButton, IonContent } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
 import config from './../firebaseConfig';
 import useFetchTrees from '../hooks/useFetchTrees';
 import { arrowBack} from 'ionicons/icons'; 
+import { getAuth } from 'firebase/auth';
+import useLogout from '../hooks/useLogout';
 
 
 const Statistics: React.FC = () => {
-    // Datos hardcoded
     const history = useHistory();
     const [trees, setTrees] = useState<Tree[]>([]);
+    const logout = useLogout();
     useFetchTrees(setTrees, config);
-    console.log(trees);
 
     const countTreesByUser = (trees: Tree[]) => {
-        // Usamos reduce para contar los árboles por usuario
         const userCounts: Record<string, number> = trees.reduce((acc, tree) => {
             acc[tree.createdBy] = (acc[tree.createdBy] || 0) + 1;
             return acc;
         }, {} as Record<string, number>);
-    
-        // Convertimos el objeto a un array de objetos
         const userStatistics = Object.entries(userCounts).map(([user, treesRegistered]) => ({
             user,
             treesRegistered,
@@ -29,11 +27,17 @@ const Statistics: React.FC = () => {
         return userStatistics;
     };
     const userStatistics = countTreesByUser(trees);
-    console.log(userStatistics);
 
     const handleBack = () => {
         history.goBack();
     };
+    useEffect(()=>{
+        const auth = getAuth(config);
+        const user = auth.currentUser;
+        if(!user){
+            logout();
+        }
+    })
     return (
         <IonPage>
             <IonHeader>

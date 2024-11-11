@@ -22,8 +22,10 @@ import { Camera, CameraResultType } from '@capacitor/camera';
 import { Geolocation } from '@capacitor/geolocation';
 import { getDatabase, ref, get, push, update } from 'firebase/database';
 import { getStorage, ref as storageRef, uploadString, getDownloadURL } from 'firebase/storage';
-import { getAuth } from 'firebase/auth';
 import imageCompression from 'browser-image-compression';
+import useLogout from '../hooks/useLogout';
+import { getAuth } from 'firebase/auth';
+import config from './../firebaseConfig';
 
 interface TreeRegisterProps {
     treeData?: Tree;
@@ -49,6 +51,7 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
     const [isCodeGenerated, setIsCodeGenerated] = useState(false);
     const [address, setAddress] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const logout = useLogout();
 
     useEffect(() => {
         loadSpecies();
@@ -62,6 +65,11 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
             setRegisterDate(treeData.registerDate);
             setOldPhoto(treeData.imageUrl);
             setAddress(treeData.address);
+        }
+        const auth = getAuth(config);
+        const user = auth.currentUser;
+        if(!user){
+            logout();
         }
     }, []);
 
@@ -358,11 +366,18 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
                 </IonItem>
                 <IonItem>
                     <IonLabel position="stacked">Diámetro (cm)</IonLabel>
-                    <IonInput 
-                        type="number" 
-                        value={diameter} 
-                        onIonChange={(e) => setDiameter(parseFloat(e.detail.value!))} 
-                        required 
+                    <IonInput
+                        type="text"
+                        value={diameter.toString()}
+                        onIonInput={(e) => {
+                            const input = e.detail.value || '';
+                            if (/^\d{0,4}$/.test(input)) {
+                                setDiameter(parseFloat(input) || 0);
+                            }
+                        }}
+                        inputmode="numeric" 
+                        maxlength={4}
+                        required
                     />
                 </IonItem>
                 <IonItem>
