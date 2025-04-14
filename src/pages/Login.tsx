@@ -120,6 +120,8 @@ const LoginTree: React.FC = () => {
               {loading ? 'Cargando...' : 'Iniciar sesión'}
             </IonButton>
           </form>
+          <IonButton expand="full" routerLink="/register">Crear Cuenta</IonButton>
+
 
           <IonAlert
             isOpen={showAlert}

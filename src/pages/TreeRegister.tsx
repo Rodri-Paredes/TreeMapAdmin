@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  IonContent, 
-  IonHeader, 
-  IonPage, 
-  IonTitle, 
-  IonToolbar, 
-  IonButtons, 
-  IonButton, 
-  IonIcon, 
-  IonItem, 
-  IonLabel, 
-  IonInput, 
+import {
+  IonContent,
+  IonHeader,
+  IonPage,
+  IonTitle,
+  IonToolbar,
+  IonButtons,
+  IonButton,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonInput,
   IonAlert,
   IonSelect,
   IonSelectOption,
-  IonLoading
+  IonLoading,
+  IonModal
 } from '@ionic/react';
 import { useHistory, useLocation } from 'react-router';
-import { arrowBack, camera, checkmark } from 'ionicons/icons'; 
+import { arrowBack, camera, checkmark } from 'ionicons/icons';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { Geolocation } from '@capacitor/geolocation';
 import { getDatabase, ref, get, push, update } from 'firebase/database';
@@ -27,9 +28,16 @@ import useLogout from '../hooks/useLogout';
 import { getAuth } from 'firebase/auth';
 import config from './../firebaseConfig';
 
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+import LocationModal from './LocationModal';
+
 interface TreeRegisterProps {
     treeData?: Tree;
 }
+
+
 
 const TreeRegister: React.FC<TreeRegisterProps> = () => {
     const location = useLocation<TreeRegisterProps>();
@@ -51,7 +59,10 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
     const [isCodeGenerated, setIsCodeGenerated] = useState(false);
     const [address, setAddress] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showMapModal, setShowMapModal] = useState(false);
+    const [initialMapCoords, setInitialMapCoords] = useState<[number, number]>([0, 0]);
     const logout = useLogout();
+
 
     useEffect(() => {
         loadSpecies();
@@ -123,9 +134,7 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
         }
     };
 
-    const handleBack = () => {
-        history.goBack();
-    };
+  const handleBack = () => history.goBack();
 
     const handleGetLocation = async () => {
         try {
@@ -134,8 +143,18 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
                 timeout: 10000,
                 maximumAge: 0,
             });
-            setLatitude(coordinates.coords.latitude.toString());
-            setLongitude(coordinates.coords.longitude.toString());
+            let lat = coordinates.coords.latitude.toString();
+            let lng = coordinates.coords.longitude.toString();
+            setLatitude(lat);
+            setLongitude(lng);
+            if(treeData){
+                setInitialMapCoords([Number( treeData.latitude.toString()), Number(treeData.longitude.toString())]);
+            }
+            else{
+                setInitialMapCoords([Number(lat), Number(lng)]);
+            }
+
+            setShowMapModal(true);
         } catch (error) {
             console.error(error);
             setAlertMessage('Error al obtener la ubicación');
@@ -319,6 +338,10 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
         return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
     };
 
+    const onSelectPicker=(lat:Number, lng:Number) => {
+        setLatitude(lat.toString());
+        setLongitude(lng.toString());
+    }
     return (
         <IonPage>
             <IonHeader>
@@ -395,7 +418,7 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
                     />
                 </IonItem>
                 <IonButton expand="full" onClick={handleGetLocation} style={{ margin: '10px 0' }}>
-                    Obtener Ubicación Actual
+                    Seleccionar Ubicacion 
                 </IonButton>
                 <IonItem>
                     <IonLabel position="stacked">Código</IonLabel>
@@ -434,7 +457,7 @@ const TreeRegister: React.FC<TreeRegisterProps> = () => {
                    <img src={`${oldPhoto}`} alt="Árbol" style={{ width: '100%', marginTop: '10px' }} />
                 )}
             </IonContent>
-
+                <LocationModal isOpen={showMapModal} onClose={() => setShowMapModal(false)} initialCoords={initialMapCoords} onSelectLocation={onSelectPicker}></LocationModal>
             <IonLoading isOpen={isSubmitting} message={'Guardando...'} />
             <IonAlert
                 isOpen={showAlert}

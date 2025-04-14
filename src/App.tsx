@@ -38,6 +38,7 @@ import MapPage from './pages/MapPage';
 import TreeRegister from './pages/TreeRegister';
 import Login from './pages/Login';
 import Statistics from './pages/Statistics';
+import RegisterTree from './pages/RegisterAccount';
 
 
 setupIonicReact();
@@ -60,9 +61,12 @@ const App: React.FC = () => (
         <Route exact path="/">
           <Redirect to="/Login" />
         </Route>
+        <Route path="/register" component={RegisterTree} exact />
+
       </IonRouterOutlet>
     </IonReactRouter>
   </IonApp>
+  
 );
 
 export default App;
