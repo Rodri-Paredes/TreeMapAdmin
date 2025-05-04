@@ -11,10 +11,18 @@ import {
   IonLabel,
   IonAlert,
   IonLoading,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
+  IonGrid,
+  IonRow,
+  IonCol
 } from '@ionic/react';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { useHistory } from 'react-router-dom';
 import config from '../firebaseConfig';
+import './Login.css';
 
 const auth = getAuth(config);
 
@@ -42,7 +50,7 @@ const RegisterTree: React.FC = () => {
       await createUserWithEmailAndPassword(auth, email, password);
       setEmail('');
       setPassword('');
-      history.push('/tree-list'); // Redirigir después del registro
+      history.push('/tree-list');
     } catch (err: any) {
       setError('Error al registrar usuario');
       setShowAlert(true);
@@ -54,34 +62,56 @@ const RegisterTree: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
-          <IonTitle>Registro de Usuario</IonTitle>
+        <IonToolbar color="primary">
+          <IonTitle className="ion-text-center">🌱 Crear Cuenta</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="ion-padding">
-        <form onSubmit={handleRegister}>
-          <IonItem>
-            <IonLabel position="stacked">Email</IonLabel>
-            <IonInput
-              type="email"
-              value={email}
-              onInput={(e: any) => setEmail(e.target.value!)}
-              required
-            />
-          </IonItem>
-          <IonItem>
-            <IonLabel position="stacked">Contraseña</IonLabel>
-            <IonInput
-              type="password"
-              value={password}
-              onInput={(e: any) => setPassword(e.target.value!)}
-              required
-            />
-          </IonItem>
-          <IonButton expand="full" type="submit" disabled={loading}>
-            {loading ? 'Registrando...' : 'Registrarse'}
-          </IonButton>
-        </form>
+
+      <IonContent className="ion-padding login-elegant-bg">
+        <IonGrid className="ion-justify-content-center ion-align-items-center" style={{ height: '100%' }}>
+          <IonRow className="ion-justify-content-center">
+            <IonCol size="12" sizeMd="8" sizeLg="6" sizeXl="4">
+              <IonCard className="login-card">
+                <IonCardHeader>
+                  <IonCardTitle className="ion-text-center">
+                    Regístrate para comenzar
+                  </IonCardTitle>
+                </IonCardHeader>
+                <IonCardContent>
+                  <form onSubmit={handleRegister} className="login-form">
+                    <IonItem lines="none">
+                      <IonLabel position="stacked">Correo Electrónico</IonLabel>
+                      <IonInput
+                        type="email"
+                        value={email}
+                        onInput={(e: any) => setEmail(e.target.value!)}
+                        required
+                      />
+                    </IonItem>
+
+                    <IonItem lines="none">
+                      <IonLabel position="stacked">Contraseña</IonLabel>
+                      <IonInput
+                        type="password"
+                        value={password}
+                        onInput={(e: any) => setPassword(e.target.value!)}
+                        required
+                      />
+                    </IonItem>
+
+                    <IonButton expand="block" type="submit" disabled={loading} className="login-button">
+                      {loading ? 'Registrando...' : 'Registrarse'}
+                    </IonButton>
+
+                    <IonButton expand="block" routerLink="/login" color="light" className="register-button">
+                      Ya tengo una cuenta
+                    </IonButton>
+                  </form>
+                </IonCardContent>
+              </IonCard>
+            </IonCol>
+          </IonRow>
+        </IonGrid>
 
         <IonAlert
           isOpen={showAlert}
@@ -90,6 +120,7 @@ const RegisterTree: React.FC = () => {
           message={error}
           buttons={['OK']}
         />
+
         <IonLoading isOpen={loading} message={'Creando cuenta...'} />
       </IonContent>
     </IonPage>
