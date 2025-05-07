@@ -10,11 +10,10 @@ import Login from './pages/Login';
 import Statistics from './pages/Statistics';
 import RegisterTree from './pages/RegisterAccount';
 
-/* Firebase */
-import app from './firebaseConfig';
+import { app } from './firebaseConfig';
 import { getDatabase, ref, get } from 'firebase/database';
-
-/* Core CSS required for Ionic components to work properly */
+import { messaging } from './firebaseConfig';
+import { getToken, onMessage } from 'firebase/messaging';
 import '@ionic/react/css/core.css';
 import '@ionic/react/css/normalize.css';
 import '@ionic/react/css/structure.css';
@@ -30,6 +29,8 @@ import './theme/variables.css';
 
 setupIonicReact();
 
+const VAPID_KEY = 'BBogzm_bCDGJ22UVE-WA2rA_QSGOgreZUZzIO1t7gpxv84vbFHvC__H6nalMHb6SpLf-YYWEWxjcivq0hEc68UQ'; 
+
 const App: React.FC = () => {
   useEffect(() => {
     if ('Notification' in window) {
@@ -37,6 +38,42 @@ const App: React.FC = () => {
         console.log('Permiso de notificación:', permission);
       });
     }
+
+    // 🔔 Configurar FCM Push
+    const setupPushNotifications = async () => {
+      try {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          const token = await getToken(messaging, { vapidKey: VAPID_KEY });
+          console.log('✅ Token FCM:', token);
+          // Aquí podrías guardar el token en Firebase Realtime DB si quieres
+        } else {
+          console.warn('❌ Permiso de notificación denegado');
+        }
+      } catch (error) {
+        console.error('Error al obtener token FCM:', error);
+      }
+    };
+
+    setupPushNotifications();
+
+    onMessage(messaging, (payload) => {
+      console.log('🔔 Mensaje recibido en foreground:', payload);
+    
+      if (payload.notification) {
+        const { title, body } = payload.notification;
+    
+        if (typeof title === 'string' && typeof body === 'string') {
+          new Notification(title, { body });
+        } else {
+          console.warn('El título o el cuerpo de la notificación no son cadenas de texto válidas.');
+        }
+      } else {
+        console.warn('Notificación no disponible en el payload');
+      }
+    });
+    
+    
 
     const db = getDatabase(app);
 
